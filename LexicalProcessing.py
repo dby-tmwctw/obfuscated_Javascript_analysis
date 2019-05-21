@@ -38,7 +38,7 @@ def initialize(content_path, keyword_path):
     content = test_object.read()
 
     # Keyword set
-    keyword_document = open('JavaScriptKeywords.txt')
+    keyword_document = open(keyword_path)
     keyword_string = keyword_document.read()
     keyword_list = list(keyword_string.split())
     keyword_set = set(keyword_list)
@@ -56,7 +56,7 @@ def initialize(content_path, keyword_path):
 
     #Character and keyword mapping
     special_character = list([';', ':', ',', '\\', '.', '?'])
-    delimiter = list(['(', ')', '{', '}', '[', ']', '/'])
+    delimiter = list(['(', ')', '{', '}', '[', ']'])
     operational_character = list(['=', '+=', '-=', '*=', '/=', '%=', '+', '-', '*', '/', '%', '++', '--', '<<', '>>', '>>>', '&', '|', '^', '~'])
     comparational_character = list(['==', '===', '!=', '!==', '<', '>', '>=', '<=', '&&', '||', '!'])
     all_character = []
@@ -83,9 +83,9 @@ def parse_comment(content):
         if (content[1] == '*'):
             index = content.find('*/')
             if (index != -1):
-                return True, index + 2
+                return True, '', index + 2
             else:
-                return True, -1
+                return True, -1, index + 2
         elif (content[1] == '/'):
             index = content.find('\n')
             if (index == -1):
@@ -241,7 +241,8 @@ def parse_regex(content, token, character_map):
     a regular expression. If so, return the regular expression.
     '''
     regex_flag = set(['g', 'm', 'i', 'y', 'u', 's'])
-    if (content[0] == '/') and (token[1] != 'identifier') and (token[1] != 'number') and (token[1] != character_map[')']):
+    # print token
+    if (content[0] == '/') and (token[1] != 'identifier') and (token[1] != 'number') and (token[2] != character_map[')']):
         regex = ''
         regex += content[0]
         square_brackets = 0
@@ -261,8 +262,9 @@ def parse_regex(content, token, character_map):
             else:
                 slash_detector = False
             index += 1
-        if (index < len(content) - 1) and (content[index+1] in regex_flag):
+        while (index < len(content) - 1) and (content[index+1] in regex_flag):
             regex += content[index+1]
+            index += 1
         return True, regex, len(regex)
     return False, '', 0
 
@@ -363,4 +365,4 @@ def lexical_processing(content_path, keyword_path):
     token_list.pop(0)
     return token_list
 
-lexical_processing('editor40bcf4.js', 'JavaScriptKeywords.txt')
+lexical_processing('modernizr.js', 'JavaScriptKeywords.txt')
