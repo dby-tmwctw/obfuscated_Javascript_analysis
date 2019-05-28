@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from collections import *
+import os
 
 '''
 输入输出定义：
@@ -53,6 +54,15 @@ def initialize(content_path, keyword_path):
     escape_map['r'] = '\r'
     escape_map['b'] = '\b'
     escape_map['f'] = '\f'
+    escape_map['/'] = '/'
+    escape_map['%'] = '%'
+    escape_map['t'] = '\t'
+    escape_map['\n'] = ''
+    escape_map['d'] = '\d'
+    escape_map['A'] = '\A'
+    escape_map['>'] = '\>'
+    escape_map['p'] = '\p'
+    escape_map['.'] = '\.'
 
     #Character and keyword mapping
     special_character = list([';', ':', ',', '\\', '.', '?'])
@@ -81,15 +91,15 @@ def parse_comment(content):
     '''
     if (content[0] == '/'):
         if (content[1] == '*'):
-            index = content.find('*/')
+            index = content.find('*/', 2)
             if (index != -1):
                 return True, '', index + 2
             else:
                 return True, -1, index + 2
         elif (content[1] == '/'):
-            index = content.find('\n')
+            index = content.find('\n', 2)
             if (index == -1):
-                index = content.find('\r')
+                index = content.find('\r', 2)
             if (index != -1):
                 return True, '', index + 1
     return False, '', 0
@@ -159,7 +169,8 @@ def parse_string(content, escape_map):
                             string_token += escape_map[content[i+1]]
                             range_list.next()
                     except KeyError:
-                        print 'KeyError Detected', string_token
+                        string_token += content[i+1]
+                        range_list.next()
             # print len(string_token)
             # print string_token
             return True, string_token, index + 1
@@ -195,6 +206,7 @@ def parse_number(content):
     Given a string representation of a programme, check whether it starts with
     a number. If so, return a string representation of that number.
     '''
+    hexical_number = set(['a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F'])
     if (content[0].isdigit()):
         number = ''
         number += content[0]
@@ -203,7 +215,7 @@ def parse_number(content):
         # In the while loop below, we assume the JavaScript gives us a valid
         # number
         while index < len(content):
-            if (content[index].isdigit()) or (content[index] == '.') or (content[index] == 'x'):
+            if (content[index].isdigit()) or (content[index] in hexical_number) or (content[index] == '.') or (content[index] == 'x'):
                 number += content[index]
                 index += 1
             elif (content[index] == 'e') or (content[index] == 'E'):
@@ -233,7 +245,8 @@ def parse_character(content, character_map):
         return True, test_2, 2
     elif (character_map[test_1] != 0):
         return True, test_1, 1
-    return False, ''
+    print repr(content[0])
+    return False, '', 0
 
 def parse_regex(content, token, character_map):
     '''
@@ -242,7 +255,7 @@ def parse_regex(content, token, character_map):
     '''
     regex_flag = set(['g', 'm', 'i', 'y', 'u', 's'])
     # print token
-    if (content[0] == '/') and (token[1] != 'identifier') and (token[1] != 'number') and (token[2] != character_map[')']):
+    if (content[0] == '/') and (token[1] != 'identifier') and (token[1] != 'number') and (token[2] != character_map[')']) and (token[2] != character_map[']']):
         regex = ''
         regex += content[0]
         square_brackets = 0
@@ -288,15 +301,24 @@ def string_to_number(number):
     if (index_dot == -1) and (index_e == -1) and (index_E == -1):
         return int(number)
     elif (index_e == -1):
-        return float(number)
+        try:
+            return float(number)
+        except ValueError:
+            return number
     elif (index_E == -1):
-        base = float(number[:index_e])
-        power = int(number[index_e+1:])
-        return base * (10 ** power)
+        try:
+            base = float(number[:index_e])
+            power = int(number[index_e+1:])
+            return base * (10 ** power)
+        except ValueError:
+            return number
     else:
-        base = float(number[:index_E])
-        power = int(number[index_E+1:])
-        return base * (10 ** power)
+        try:
+            base = float(number[:index_E])
+            power = int(number[index_E+1:])
+            return base * (10 ** power)
+        except ValueError:
+            return number
 
 def lexical_processing(content_path, keyword_path):
     '''
@@ -311,17 +333,21 @@ def lexical_processing(content_path, keyword_path):
     identifier_signature = character_keyword_length + 2
     number_signature = character_keyword_length + 3
     regex_signature = character_keyword_length + 4
-    meaningless_value = list([' ', '\n', '\r', '\b', '\f', unichr(0x0009)])
+    meaningless_value = list([' ', '\n', '\r', '\b', '\f', unichr(0x0009), '\xbb', '\xbf', '\xef'])
     i = 0
     content_length = len(content)
     token_list = []
     token_list.append(tuple([None, None, int(character_keyword_length + 6)]))
     while i < content_length:
+        # print token_list[len(token_list)-1]
         if (content[i] in meaningless_value):
             i += 1
             continue
         flag1, comment, comment_length = parse_comment(content[i:])
         if (flag1):
+            # print 'comment block detected', '------------------------------'
+            # print comment
+            # print comment_length
             if (comment_length == -1):
                 raise Exception, 'Comment block not closed'
             i = i + comment_length
@@ -360,9 +386,36 @@ def lexical_processing(content_path, keyword_path):
             continue
         token_list.append(tuple([content[i], 'invalid character', character_keyword_length + 5]))
         i += 1
-        print content[i:i+20]
-        raise Exception, 'Character Not Valid'
+        print repr(content[i:i+20])
+        # raise Exception, 'Character Not Valid'
     token_list.pop(0)
     return token_list
 
-lexical_processing('modernizr.js', 'JavaScriptKeywords.txt')
+# print lexical_processing('D:\encrypted_obfuscated_Javascript_programme_analysis\modernizr.js', 'D:\encrypted_obfuscated_Javascript_programme_analysis\JavaScriptKeywords.txt')
+# Mode1Programmes = ['0a0e10988e66bffe2be4fb6d62760d73', '0a7b662dba064819a1e3c762fadb697b',
+#                    '0a89e057b47001aa96cbb9b350913cbc', '0a0408ceb46f34f230e333557328d2fc',
+#                    '0a6891b0e0e717445feb7d08c8e84b81', '0a74359f190c92a6c0f776034c08855a',
+#                    '0aac8b7a77c8da292e612d63077d280c', '0aec8291a01f84dbd8ea186494937f6a',
+#                    '00bd3cda5a94327755fb107b1af8a570', '0ce0f66bae012600e943a3d32638d58c',
+#                    '0d7ab883292d9b0356bcc1a1246e7b1b', '0d9faee0c0b21b290bc33648ac0313ea',
+#                    '0d45b6318f8d1b9dad2faa6b6703774f', '0d90839bd4c9bcb62795a8a1f20ce7bd',
+#                    '0db0c7164e7f6a734957991166513539', '0db6dfe80b877e5598dadb487ffb986b']
+# for programme in Mode1Programmes:
+#     print programme, '-------------------------------------------'
+#     programme_path = 'D:\encrypted_obfuscated_Javascript_programme_analysis\Virus\\' + programme
+#     lexical_processing(programme_path, 'JavaScriptKeywords.txt')
+
+# for root, dirs, files in os.walk('D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus'):
+#     for file in files:
+#         print file, '-----------------------------------------'
+#         programme_path = 'D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\' + file
+#         lexical_processing(programme_path, 'JavaScriptKeywords.txt')
+
+# lexical_processing('D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\a3fdd0297615149512c89759f7fd6846', 'JavaScriptKeywords.txt')
+
+# test_string = '\n\
+# a'
+# print repr(test_string)
+#
+# for i in range(0, len(test_string)):
+#     print repr(test_string[i])
