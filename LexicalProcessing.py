@@ -81,8 +81,42 @@ def initialize(content_path, keyword_path):
     character_map = defaultdict(int)
     for i in range(1, len(all_character_keyword) + 1):
         character_map[all_character_keyword[i-1]] = i
+    character_keyword_length = len(character_map.keys())
+    string_signature = character_keyword_length + 1
+    identifier_signature = character_keyword_length + 2
+    number_signature = character_keyword_length + 3
+    regex_signature = character_keyword_length + 4
+    character_map['string'] = string_signature
+    character_map['identifier'] = identifier_signature
+    character_map['number'] = number_signature
+    character_map['regex'] = regex_signature
+    # print character_map
+
 
     return content, keyword_set, escape_map, character_map
+
+def get_character_map(keyword_path):
+    keyword_document = open(keyword_path)
+    keyword_string = keyword_document.read()
+    keyword_list = list(keyword_string.split())
+    keyword_set = set(keyword_list)
+    special_character = list([';', ':', ',', '\\', '.', '?'])
+    delimiter = list(['(', ')', '{', '}', '[', ']'])
+    operational_character = list(['=', '+=', '-=', '*=', '/=', '%=', '+', '-', '*', '/', '%', '++', '--', '<<', '>>', '>>>', '&', '|', '^', '~'])
+    comparational_character = list(['==', '===', '!=', '!==', '<', '>', '>=', '<=', '&&', '||', '!'])
+    all_character = []
+    all_character.extend(special_character)
+    all_character.extend(delimiter)
+    all_character.extend(operational_character)
+    all_character.extend(comparational_character)
+    all_character_set = set(all_character)
+    all_character_keyword = list(all_character)
+    all_character_keyword.extend(keyword_list)
+    all_character_keyword_set = set(all_character_keyword)
+    character_map = defaultdict(int)
+    for i in range(1, len(all_character_keyword) + 1):
+        character_map[all_character_keyword[i-1]] = i
+    return character_map
 
 def parse_comment(content):
     '''
@@ -158,7 +192,8 @@ def parse_string(content, escape_map):
                     # print 'entered'
                     try:
                         if (content[i+1] == 'x'):
-                            string_token += chr(int(content[i+2:i+4], 16))
+                            string_token += '\\x'
+                            string_token += str(int(content[i+2:i+4], 16))
                             range_list.next()
                             range_list.next()
                             range_list.next()
@@ -245,7 +280,7 @@ def parse_character(content, character_map):
         return True, test_2, 2
     elif (character_map[test_1] != 0):
         return True, test_1, 1
-    print repr(content[0])
+    # print repr(content[0])
     return False, '', 0
 
 def parse_regex(content, token, character_map):
@@ -328,16 +363,12 @@ def lexical_processing(content_path, keyword_path):
     represent the token number
     '''
     content, keyword_set, escape_map, character_map = initialize(content_path, keyword_path)
-    character_keyword_length = len(character_map.keys())
-    string_signature = character_keyword_length + 1
-    identifier_signature = character_keyword_length + 2
-    number_signature = character_keyword_length + 3
-    regex_signature = character_keyword_length + 4
     meaningless_value = list([' ', '\n', '\r', '\b', '\f', unichr(0x0009), '\xbb', '\xbf', '\xef'])
     i = 0
     content_length = len(content)
     token_list = []
-    token_list.append(tuple([None, None, int(character_keyword_length + 6)]))
+    token_list.append(tuple([None, None, int(len(character_map.keys()) + 2)]))
+    string_list = []
     while i < content_length:
         # print token_list[len(token_list)-1]
         if (content[i] in meaningless_value):
@@ -354,7 +385,8 @@ def lexical_processing(content_path, keyword_path):
             continue
         flag2, string, index = parse_string(content[i:], escape_map)
         if (flag2):
-            token_list.append(tuple([string, 'string', string_signature]))
+            token_list.append(tuple([string, 'string', character_map['string']]))
+            string_list.append(string)
             i = i + index
             # print string
             continue
@@ -364,18 +396,18 @@ def lexical_processing(content_path, keyword_path):
                 token_list.append(tuple([identifier, 'keyword', character_map[identifier]]))
                 i = i + identifier_length
             else:
-                token_list.append(tuple([identifier, 'identifier', identifier_signature]))
+                token_list.append(tuple([identifier, 'identifier', character_map['identifier']]))
                 i = i + identifier_length
             continue
         flag4, number, number_length= parse_number(content[i:])
         if (flag4):
-            token_list.append(tuple([string_to_number(number), 'number', number_signature]))
+            token_list.append(tuple([string_to_number(number), 'number', character_map['number']]))
             i = i + number_length
             continue
         flag5, regex, regex_length= parse_regex(content[i:], token_list[len(token_list)-1], character_map)
         if (flag5):
             # print 'Regular Expression Detected'
-            token_list.append(tuple([regex, 'regular expression', regex_signature]))
+            token_list.append(tuple([regex, 'regular expression', character_map[regex]]))
             i = i + regex_length
             # print regex
             continue
@@ -384,14 +416,14 @@ def lexical_processing(content_path, keyword_path):
             token_list.append(tuple([character, 'character', character_map[character]]))
             i = i + character_length
             continue
-        token_list.append(tuple([content[i], 'invalid character', character_keyword_length + 5]))
+        token_list.append(tuple([content[i], 'invalid character', len(character_map.keys()) + 1]))
         i += 1
-        print repr(content[i:i+20])
+        # print repr(content[i:i+20])
         # raise Exception, 'Character Not Valid'
     token_list.pop(0)
-    return token_list
+    return token_list, character_map, string_list
 
-# print lexical_processing('D:\encrypted_obfuscated_Javascript_programme_analysis\modernizr.js', 'D:\encrypted_obfuscated_Javascript_programme_analysis\JavaScriptKeywords.txt')
+# print lexical_processing('D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\0b8c85bb8a1624e8a5a2a64b412d91fe', 'D:\\encrypted_obfuscated_Javascript_programme_analysis\\JavaScriptKeywords.txt')
 # Mode1Programmes = ['0a0e10988e66bffe2be4fb6d62760d73', '0a7b662dba064819a1e3c762fadb697b',
 #                    '0a89e057b47001aa96cbb9b350913cbc', '0a0408ceb46f34f230e333557328d2fc',
 #                    '0a6891b0e0e717445feb7d08c8e84b81', '0a74359f190c92a6c0f776034c08855a',
