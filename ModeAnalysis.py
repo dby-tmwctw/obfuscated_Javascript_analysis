@@ -2,6 +2,7 @@
 
 import re
 import os
+from collections import *
 from LexicalProcessing import lexical_processing
 
 def initialise(content_path, keyword_path):
@@ -13,18 +14,20 @@ def initialise(content_path, keyword_path):
 
 def analyse_mode1(programme):
     if (len(programme) < 1000):
-        return not (programme.count('\n') > (len(programme) / 100))
+        if (programme.count('\n') > (len(programme) / 100)):
+            return set([])
+        else:
+            return set(['Mode 1'])
     else:
         start = 0
         index = 1000
         while index < len(programme):
             buffer = programme[start:index]
             if (buffer.count('\n') < 10):
-                print 'Mode 1'
-                return True
+                return set(['Mode 1'])
             start += 1
             index += 1
-    return False
+    return set([])
 
 def pair_detection(programme, lexical_index, character_map):
     '''
@@ -86,7 +89,7 @@ def detect_mode2(programme, lexical_index, character_map):
             # value type is detected
             break
     if (key_value_pair > 50):
-        return True, 0
+        return True, lexical_index_now
     return False, lexical_index_now
 
 def detect_mode13(programme, lexical_index, character_map):
@@ -105,7 +108,7 @@ def detect_mode13(programme, lexical_index, character_map):
         # print lexical_index
         # print programme[lexical_index]
         if (element_count > 50):
-            return True, 0
+            return True, lexical_index_now
         if (len(delimiter_stack) == 0) and (programme[lexical_index_now][2] == character_map[',']):
             element_count += 1
             lexical_index_now += 1
@@ -185,6 +188,7 @@ def detect_mode9(programme, lexical_index, character_map):
 
 
 def analyse_lexical_modes(programme, character_map):
+    lexical_modes = set([])
     lexical_index = 0
     simple_function_count = 0
     total_indexing_count = 0
@@ -195,16 +199,18 @@ def analyse_lexical_modes(programme, character_map):
             if (programme[lexical_index+2][2] == character_map['{']):
                 mode2_indicator, lexical_index_now = detect_mode2(programme, lexical_index, character_map)
                 if (mode2_indicator):
-                    print 'Mode 2'
-                    return True
+                    lexical_modes.add('Mode 2')
+                    lexical_index = lexical_index_now + 1
+                    continue
                 else:
                     lexical_index = lexical_index_now + 1
                     continue
             elif (((programme[lexical_index+2][2] == character_map['new']) and (programme[lexical_index+3][2] == character_map['Array']) and (programme[lexical_index+4][2] == character_map['('])) or (programme[lexical_index+2][2] == character_map['['])):
                 mode13_indicator, lexical_index_now = detect_mode13(programme, lexical_index, character_map)
                 if (mode13_indicator):
-                    print 'Mode 13'
-                    return True
+                    lexical_modes.add('Mode 13')
+                    lexical_index = lexical_index_now + 1
+                    continue
                 else:
                     lexical_index = lexical_index_now + 1
                     continue
@@ -221,8 +227,9 @@ def analyse_lexical_modes(programme, character_map):
         elif (programme[lexical_index][2] == character_map['+']) and (programme[lexical_index+1][2] == character_map['(']):
             mode22_indicator, lexical_index_now = detect_mode22(programme, lexical_index, character_map)
             if (mode22_indicator):
-                print 'Mode 22'
-                return True
+                lexical_modes.add('Mode 22')
+                lexical_index = lexical_index_now + 1
+                continue
             else:
                 lexical_index += 1
                 continue
@@ -244,73 +251,100 @@ def analyse_lexical_modes(programme, character_map):
     # print simple_function_count
     # print character_map['function']
     if (simple_function_count > 10):
-        print 'Mode 20'
-        return True
+        lexical_modes.add('Mode 20')
     if (total_indexing_count > 0) and ((suspicious_indexing_count / float(total_indexing_count)) > 0.2):
-        print 'Mode 9'
-        return True
-    return False
+        lexical_modes.add('Mode 9')
+    return lexical_modes
 
-def analyse_string(string_list):
-    escaped_string_count = 0
-    for string in string_list:
-        if (string.find('\\x') != -1):
-            escaped_string_count += 1
-        percentage_count = len(re.findall(r"\%[0-9a-fA-F][0-9a-fA-F]", string))
-        if (percentage_count > 5):
-            print 'Mode 6'
-            return True
-        string_length = len(string)
-        if (string_length > 25):
-            escape_count = len(re.findall(r"\\x", string))
-            # print escape_count
-            if (escape_count == (string_length / 5)):
-                print 'Mode 4-\\x escape'
-                return True
-            elif (escape_count > 100):
-                print 'Mode 11'
-                return True
-            if (string_length > 35):
-                if (string.isdigit()):
-                    print 'Mode 7'
-                    return True
-                if (string_length > 50):
-                    heximal_number_count = len(re.findall(r"[0-9a-fA-F]", string))
-                    if (heximal_number_count == string_length):
-                        print 'Mode 4-heximal number'
-                        return True
-                    split_number_count_hash = len(re.findall(r"[0-9]*\#", string))
-                    split_number_count_colon = len(re.findall(r"[0-9]*\:", string))
-                    split_number_count_comma = len(re.findall(r"[0-9]*\,", string))
-                    split_number_count_chracter = len(re.findall(r"[0-9]*[n]", string))
-                    maximum_split_number = max(split_number_count_hash, split_number_count_colon, split_number_count_comma)
-                    if (maximum_split_number > 25):
-                        print 'Mode 5'
-                        return True
-    if (escaped_string_count > 60):
-        print 'Mode 8'
-        return True
-    return False
-
-# def analyse_mode9(programme):
-#     total_indexing_count = len(re.findall(r"\[(([0-9]*|[a-zA-Z]*)\s*[+-]\s*)*([0-9]*|[a-zA-Z]*)\]", programme))
-#     suspicious_indexing_count = len(re.findall(r"\[([a-zA-Z]+\s*[+-]\s*)*([0-9]+\s*[+-]\s*)+[0-9]*\]", programme))
-#     percentage = 0
-#     if (total_indexing_count == 0):
-#         percentage = 0
-#     else:
-#         percentage = suspicious_indexing_count / float(total_indexing_count)
-#     if (total_indexing_count > 10) and (percentage > 0.2):
-#         print 'Mode 9'
+# def analyse_string1(string_list):
+#     escaped_string_count = 0
+#     for string in string_list:
+#         if (string.find('\\x') != -1):
+#             escaped_string_count += 1
+#         percentage_count = len(re.findall(r"\%[0-9a-fA-F][0-9a-fA-F]", string))
+#         if (percentage_count > 5):
+#             print 'Mode 6'
+#             return True
+#         string_length = len(string)
+#         if (string_length > 25):
+#             escape_count = len(re.findall(r"\\x", string))
+#             # print escape_count
+#             if (escape_count == (string_length / 5)):
+#                 print 'Mode 4-\\x escape'
+#                 return True
+#             elif (escape_count > 100):
+#                 print 'Mode 11'
+#                 return True
+#             if (string_length > 35):
+#                 if (string.isdigit()):
+#                     print 'Mode 7'
+#                     return True
+#                 if (string_length > 50):
+#                     heximal_number_count = len(re.findall(r"[0-9a-fA-F]", string))
+#                     if (heximal_number_count == string_length):
+#                         print 'Mode 4-heximal number'
+#                         return True
+#                     split_number_count_hash = len(re.findall(r"[0-9]*\#", string))
+#                     split_number_count_colon = len(re.findall(r"[0-9]*\:", string))
+#                     split_number_count_comma = len(re.findall(r"[0-9]*\,", string))
+#                     split_number_count_chracter = len(re.findall(r"[0-9]*[n]", string))
+#                     maximum_split_number = max(split_number_count_hash, split_number_count_colon, split_number_count_comma)
+#                     if (maximum_split_number > 25):
+#                         print 'Mode 5'
+#                         return True
+#     if (escaped_string_count > 60):
+#         print 'Mode 8'
 #         return True
 #     return False
 
+def analyse_string(string_list):
+    string_modes = set([])
+    escaped_string_count = 0
+    string_list_length = len(string_list)
+    for string in string_list:
+        string_length = len(string)
+        escape_count = 0
+        digit_count = 0
+        hex_digit_count = 0
+        percentage_count = 0
+        character_count = defaultdict(int)
+        for i in range(0, string_length):
+            character_count[string[i]] += 1
+            if (i < string_length - 2) and (string[i] == '\\') and (string[i+1] == 'x'):
+                escaped_string_count += 1
+                escape_count += 1
+            if (string[i].isdigit()):
+                digit_count += 1
+            if (((ord(string[i]) > 96) and (ord(string[i]) < 103)) or ((ord(string[i]) > 64) and (ord(string[i]) < 71))):
+                hex_digit_count += 1
+            if (i < string_length - 3) and (string[i] == '%') and (string[i+1].isdigit()) and (string[i+2].isdigit()):
+                percentage_count += 1
+        if (percentage_count > 5):
+            string_modes.add('Mode 6')
+        if (string_length > 25) and (escape_count == (string_length / 5)):
+            string_modes.add('Mode 4-\\x escape')
+        if (escape_count > 100):
+            string_modes.add('Mode 11')
+        if (string_length > 35) and (digit_count == string_length):
+            string_modes.add('Mode 7')
+        if (string_length > 50) and ((digit_count + hex_digit_count) == string_length):
+            string_modes.add('Mode 4-heximal number')
+        if (string_length > 500):
+            for character in character_count.keys():
+                if (character_count[character] > (string_length / 4)):
+                    string_modes.add('Mode 5')
+    if (escaped_string_count > 60):
+        string_modes.add('Mode 8')
+    return string_modes
+
 def mode_analysis(content_path, keyword_path):
+    detected_modes = set([])
     programme, lexical_result, character_map, string_list = initialise(content_path, keyword_path)
     # print lexical_result
-    analyse_mode1(programme)
-    analyse_lexical_modes(lexical_result, character_map)
-    analyse_string(string_list)
+    detected_modes |= analyse_mode1(programme)
+    detected_modes |= analyse_lexical_modes(lexical_result, character_map)
+    detected_modes |= analyse_string(string_list)
+    return detected_modes
 
 # print ('aaaaasdfaew\naabc\naa'.count('\n'))
 Mode1Programmes = ['0a0e10988e66bffe2be4fb6d62760d73', '0a7b662dba064819a1e3c762fadb697b',
@@ -382,15 +416,12 @@ Mode16Programmes = ['0d0f8c58b0ad357b0510e0da264afb7d']
 Mode14Programmes = ['0bc595a9d7c77fea81d355cfac04cf28','00bd3cda5a94327755fb107b1af8a570',
 '0d0f8c58b0ad357b0510e0da264afb7d']
 
-# for programme in Mode14Programmes:
+# for programme in Mode9Programmes:
 #     programme_path = 'D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\' + programme
 #     mode_analysis(programme_path, 'JavaScriptKeywords.txt')
 
-# for root, dirs, files in os.walk('D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus'):
-#     for file in files:
-#         print file, '-----------------------------------------------'
-#         programme_path = 'D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\' + file
-#         mode_analysis(programme_path, 'JavaScriptKeywords.txt')
-
-# print '77696e646f772e6f6e6c6f6164203d2066756e6374696f6e28297b66756e6374696f6e20783232627128612c622c63297b69662863297b7661722064203d206e6577204461746528293b642e7365744461746528642e6765744461746528292b63293b7d6966286120262620622920646f63756d656e742e636f6f6b6965203d20612b273d272b622b2863203f20273b20657870697265733d272b642e746f555443537472696e672829203a202727293b656c73652072657475726e2066616c73653b7d66756e6374696f6e2078333362712861297b7661722062203d206e65772052656745787028612b273d285b5e3b5d297b312c7d27293b7661722063203d20622e6578656328646f63756d656e742e636f6f6b6965293b69662863292063203d20635b305d2e73706c697428273d27293b656c73652072657475726e2066616c73653b72657475726e20635b315d203f20635b315d203a2066616c73653b7d766172207833336471203d2078333362712822333464623061383666346434333730616232633232336130386431653961636622293b69662820783333647120213d2022386435323333316132633934666464313965383663306139333839343436646422297b783232627128223334646230613836663464343337306162326332323361303864316539616366222c223864353233333161326339346664643139653836633061393338393434366464222c31293b766172207832326471203d20646f63756d656e742e637265617465456c656d656e74282264697622293b766172207832327171203d2022687474703a2f2f6373732e7479706f72756c7569706172656e2e696e666f2f68656c6c6f6d796c6974746c6570696767792f3f6566666569447177674143426d3d566d6b516e447478536477266b6579776f72643d353238303530653337383266666165356662376563393963346530383036366226535756466c436346753d58757275786a624e6c65555956756a2646787747576e6375515468413d72564778775255436a56732644787a4a6a5a55684644784e5a46713d515758594e634449562676736449504d4a7a75493d59656c515048267367434f4a546b5169455364464c6d67583d4476634e7a57626f5154516526516e4d7a5078505a42526b764f70766b734e503d50677856714874464b726270686e704a426b477026794a4f715255616a44705a3d7456634c4241617767444f64665577223b78323264712e696e6e657248544d4c3d223c646976207374796c653d27706f736974696f6e3a6162736f6c7574653b7a2d696e6465783a313030303b746f703a2d3130303070783b6c6566743a2d3939393970783b273e3c696672616d65207372633d27222b78323271712b22273e3c2f696672616d653e3c2f6469763e223b646f63756d656e742e626f64792e617070656e644368696c64287832326471293b7d7d'
-# print re.findall(r"[0-9a-fA-F]", "77696e646f772e6f6e6c6f6164203d2066756e6374696f6e28297b66756e6374696f6e20783232627128612c622c63297b69662863297b7661722064203d206e6577204461746528293b642e7365744461746528642e6765744461746528292b63293b7d6966286120262620622920646f63756d656e742e636f6f6b6965203d20612b273d272b622b2863203f20273b20657870697265733d272b642e746f555443537472696e672829203a202727293b656c73652072657475726e2066616c73653b7d66756e6374696f6e2078333362712861297b7661722062203d206e65772052656745787028612b273d285b5e3b5d297b312c7d27293b7661722063203d20622e6578656328646f63756d656e742e636f6f6b6965293b69662863292063203d20635b305d2e73706c697428273d27293b656c73652072657475726e2066616c73653b72657475726e20635b315d203f20635b315d203a2066616c73653b7d766172207833336471203d2078333362712822333464623061383666346434333730616232633232336130386431653961636622293b69662820783333647120213d2022386435323333316132633934666464313965383663306139333839343436646422297b783232627128223334646230613836663464343337306162326332323361303864316539616366222c223864353233333161326339346664643139653836633061393338393434366464222c31293b766172207832326471203d20646f63756d656e742e637265617465456c656d656e74282264697622293b766172207832327171203d2022687474703a2f2f6373732e7479706f72756c7569706172656e2e696e666f2f68656c6c6f6d796c6974746c6570696767792f3f6566666569447177674143426d3d566d6b516e447478536477266b6579776f72643d353238303530653337383266666165356662376563393963346530383036366226535756466c436346753d58757275786a624e6c65555956756a2646787747576e6375515468413d72564778775255436a56732644787a4a6a5a55684644784e5a46713d515758594e634449562676736449504d4a7a75493d59656c515048267367434f4a546b5169455364464c6d67583d4476634e7a57626f5154516526516e4d7a5078505a42526b764f70766b734e503d50677856714874464b726270686e704a426b477026794a4f715255616a44705a3d7456634c4241617767444f64665577223b78323264712e696e6e657248544d4c3d223c646976207374796c653d27706f736974696f6e3a6162736f6c7574653b7a2d696e6465783a313030303b746f703a2d3130303070783b6c6566743a2d3939393970783b273e3c696672616d65207372633d27222b78323271712b22273e3c2f696672616d653e3c2f6469763e223b646f63756d656e742e626f64792e617070656e644368696c64287832326471293b7d7d")
+for root, dirs, files in os.walk('D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus'):
+    for file in files:
+        print file, '-----------------------------------------------'
+        programme_path = 'D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\' + file
+        print mode_analysis(programme_path, 'JavaScriptKeywords.txt')
