@@ -69,6 +69,66 @@ def simple_function_detection(programme, lexical_index, character_map):
     else:
         return False, 0
 
+def human_readable_identifier_detection(identifier):
+    alphabetical_count = 0
+    vowel_count = 0
+    upper_case_letter_count = 0
+    repeat_storage1 = identifier[0]
+    repeat_storage2 = ''
+    total_score = 0
+    string_length = len(identifier)
+    if (string_length > 3):
+        repeat_storage2 = identifier[1]
+    vowel_set = set(['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'])
+    exceptions_set = set(['str', 'substr', 'WScript', 'wfscr', 'css', 'html', 'xfbml', 'msg', 'src', 'js', 'rCRLF', 'tmp', 'http', 'wp', 'mng', 'FB', 'fb', 'my', 'scrl', 'xhr', 'jscr', 'fn', 'rts', 'rgb', 'chr', 'warn', 'vm', 'json', 'JSON', 'key', 'this', 'bst', 'spy', 'end', 'name'])
+    for i in range(0, string_length):
+        if (identifier[i].isalpha()):
+            alphabetical_count += 1
+        if (identifier[i] in vowel_set):
+            vowel_count += 1
+        if (identifier[i].isupper()):
+            upper_case_letter_count += 1
+        if (i > 2) and (identifier[i] == repeat_storage2) and (identifier[i] == repeat_storage1):
+            total_score += 1
+        repeat_storage1 = repeat_storage2
+        repeat_storage2 = identifier[i]
+    if (alphabetical_count < (string_length * 0.7)):
+        total_score += 1
+    if (vowel_count < (alphabetical_count * 0.1)) or (vowel_count > (alphabetical_count * 0.8)):
+        total_score += 1
+    if (upper_case_letter_count > (alphabetical_count * 0.5)) and (upper_case_letter_count < (alphabetical_count * 0.95)):
+        total_score += 1
+    # print total_score
+    if ((total_score == 0) or (string_length == 1)):
+        # print identifier
+        return True
+    else:
+        for exception in exceptions_set:
+            if (identifier.find(exception) != -1):
+                return True
+        print 'Variable not human readable', identifier
+        return False
+
+# human_readable_identifier_detection('X08yhffhg7xkxf')
+# human_readable_identifier_detection('NCMCJKVczcCUyiV')
+# human_readable_identifier_detection('rfhkryrz')
+# human_readable_identifier_detection('bkrznnre')
+# human_readable_identifier_detection('rwk')
+# human_readable_identifier_detection('zkFgsm')
+# human_readable_identifier_detection('RiDojs')
+# human_readable_identifier_detection('pztgt')
+# human_readable_identifier_detection('ibt')
+# human_readable_identifier_detection('mwvjw')
+# human_readable_identifier_detection('AC_AX_RunContent')
+# human_readable_identifier_detection('uikb')
+# human_readable_identifier_detection('xjkus')
+# human_readable_identifier_detection('key_set')
+# human_readable_identifier_detection('character_map')
+# human_readable_identifier_detection('fromCharCode')
+# human_readable_identifier_detection('logHuman')
+# human_readable_identifier_detection('xhyrgs')
+
+
 def detect_mode2(programme, lexical_index, character_map):
     lexical_index_now = lexical_index + 3
     key_value_pair = 0
@@ -193,6 +253,10 @@ def analyse_lexical_modes(programme, character_map):
     simple_function_count = 0
     total_indexing_count = 0
     suspicious_indexing_count = 0
+    total_identifier_count = 0
+    not_readable_count = 0
+    single_character_count = 0
+    identifier_set = set([])
     while (lexical_index < (len(programme) - 4)):
         # print lexical_index
         if (programme[lexical_index][2] == character_map['identifier']) and (programme[lexical_index+1][2] == character_map['=']):
@@ -247,6 +311,12 @@ def analyse_lexical_modes(programme, character_map):
             else:
                 lexical_index += 1
                 continue
+        elif (programme[lexical_index][2] == character_map['identifier']):
+            if (len(programme[lexical_index][0]) == 1):
+                single_character_count += 1
+            if (not (programme[lexical_index][0] in identifier_set)) and (not (human_readable_identifier_detection(programme[lexical_index][0]))):
+                not_readable_count += 1
+            identifier_set.add(programme[lexical_index][0])
         lexical_index += 1
     # print simple_function_count
     # print character_map['function']
@@ -254,6 +324,11 @@ def analyse_lexical_modes(programme, character_map):
         lexical_modes.add('Mode 20')
     if (total_indexing_count > 0) and ((suspicious_indexing_count / float(total_indexing_count)) > 0.2):
         lexical_modes.add('Mode 9')
+    if (not_readable_count > 3):
+        lexical_modes.add('Mode 23')
+    if (single_character_count > 50):
+        lexical_modes.add('Mode 24')
+    # print identifier_set
     return lexical_modes
 
 # def analyse_string1(string_list):
@@ -341,9 +416,9 @@ def mode_analysis(content_path, keyword_path):
     detected_modes = set([])
     programme, lexical_result, character_map, string_list = initialise(content_path, keyword_path)
     # print lexical_result
-    detected_modes |= analyse_mode1(programme)
+    # detected_modes |= analyse_mode1(programme)
     detected_modes |= analyse_lexical_modes(lexical_result, character_map)
-    detected_modes |= analyse_string(string_list)
+    # detected_modes |= analyse_string(string_list)
     return detected_modes
 
 # print ('aaaaasdfaew\naabc\naa'.count('\n'))
@@ -420,8 +495,14 @@ Mode14Programmes = ['0bc595a9d7c77fea81d355cfac04cf28','00bd3cda5a94327755fb107b
 #     programme_path = 'D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\' + programme
 #     mode_analysis(programme_path, 'JavaScriptKeywords.txt')
 
-for root, dirs, files in os.walk('D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus'):
-    for file in files:
-        print file, '-----------------------------------------------'
-        programme_path = 'D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\' + file
-        print mode_analysis(programme_path, 'JavaScriptKeywords.txt')
+# error_count = 0
+# for root, dirs, files in os.walk('D:\\encrypted_obfuscated_Javascript_programme_analysis\\NormalProgrammes'):
+#     for file in files:
+#         print file, '-----------------------------------------------'
+#         programme_path = 'D:\\encrypted_obfuscated_Javascript_programme_analysis\\NormalProgrammes\\' + file
+#         if ('Mode 23' in mode_analysis(programme_path, 'JavaScriptKeywords.txt')):
+#             error_count += 1
+#             print 'Random variable name detected in', file, '-----------------'
+#         else:
+#             print 'Normal', file
+# print error_count

@@ -143,14 +143,12 @@ def parse_string(content, escape_map):
     Given a string representation of a programme, test whether it starts with a
     string. If so, return the string and the number of positions we should skip
     '''
-    if ((content[0] == '\"') or (content[0] == '\'')):
-        is_single_quotation = False
-        if (content[0] == '\''):
-            is_single_quotation = True
+    if ((content[0] == '\"') or (content[0] == '\'') or (content[0] == '`')):
+        # print '-------------------------------------------------'
         string_token = ''
         slash_detector = False
         index = 1
-        if (is_single_quotation):
+        if (content[0] == '\''):
             while index < len(content):
                 if (content[index] == '\'') and (slash_detector == False):
                     break
@@ -162,7 +160,7 @@ def parse_string(content, escape_map):
             # index = content.find('\'', 1)
             # while (index != -1) and (content[index-1] == '\\') and (content[index-2] != '\\'):
             #     index = content.find('\'', index + 1)
-        else:
+        elif (content[0] == '\"'):
             while index < len(content):
                 # print index
                 # print content[index]
@@ -181,6 +179,19 @@ def parse_string(content, escape_map):
             # index = content.find('\"', 1)
             # while (index != -1) and (content[index-1] == '\\') and (content[index-2] != '\\'):
             #     index = content.find('\"', index + 1)
+        else:
+            while index < len(content):
+                # print 'Entered'
+                if (content[index] == '`') and (slash_detector == False):
+                    break
+                if (content[index] == '\\') and (slash_detector == False):
+                    slash_detector = True
+                else:
+                    slash_detector = False
+                index += 1
+            # index = content.find('\'', 1)
+            # while (index != -1) and (content[index-1] == '\\') and (content[index-2] != '\\'):
+            #     index = content.find('\'', index + 1)
         # print index
         if (index != -1):
             # if (content[index-1] != '\\'):
@@ -242,7 +253,7 @@ def parse_number(content):
     a number. If so, return a string representation of that number.
     '''
     hexical_number = set(['a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F'])
-    if (content[0].isdigit()):
+    if ((content[0].isdigit()) or (content[0] == '.')):
         number = ''
         number += content[0]
         scientific_representation = False
@@ -290,7 +301,7 @@ def parse_regex(content, token, character_map):
     '''
     regex_flag = set(['g', 'm', 'i', 'y', 'u', 's'])
     # print token
-    if (content[0] == '/') and (token[1] != 'identifier') and (token[1] != 'number') and (token[2] != character_map[')']) and (token[2] != character_map[']']):
+    if (content[0] == '/') and (content[1] != '>') and (token[1] != 'identifier') and (token[1] != 'number') and (token[2] != character_map[')']) and (token[2] != character_map[']']) and (token[2] != character_map['<']):
         regex = ''
         regex += content[0]
         square_brackets = 0
@@ -329,10 +340,12 @@ def string_to_number(number):
     index_e = number.find('e')
     index_E = number.find('E')
     if (number[0] == '0') and (len(number) > 1) and (index_dot == -1):
-        if (number[1] != 'x'):
-            return oct(int(number, 8))
-        else:
+        if (number[1] == 'x'):
             return hex(int(number, 16))
+        elif (number[1] == 'b'):
+            return bin(int(number, 0))
+        else:
+            return oct(int(number, 8))
     if (index_dot == -1) and (index_e == -1) and (index_E == -1):
         return int(number)
     elif (index_e == -1):
@@ -355,7 +368,9 @@ def string_to_number(number):
         except ValueError:
             return number
 
-def lexical_processing(content_path, keyword_path):
+# print string_to_number('.09543')
+
+def lexical_processing(content_path, keyword_path, debug = False):
     '''
     Given a string representation of a programme, return a list of tokens in
     the form of <symbol, token number>. As currently we don't know how many
@@ -363,14 +378,15 @@ def lexical_processing(content_path, keyword_path):
     represent the token number
     '''
     content, keyword_set, escape_map, character_map = initialize(content_path, keyword_path)
-    meaningless_value = list([' ', '\n', '\r', '\b', '\f', unichr(0x0009), '\xbb', '\xbf', '\xef'])
+    meaningless_value = set([' ', '\n', '\r', '\b', '\f', unichr(0x0009), '\xbb', '\xbf', '\xef'])
     i = 0
     content_length = len(content)
     token_list = []
     token_list.append(tuple([None, None, int(len(character_map.keys()) + 2)]))
     string_list = []
     while i < content_length:
-        # print token_list[len(token_list)-1]
+        if (debug):
+            print token_list[len(token_list)-1]
         if (content[i] in meaningless_value):
             i += 1
             continue
@@ -443,7 +459,7 @@ def lexical_processing(content_path, keyword_path):
 #         programme_path = 'D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\' + file
 #         lexical_processing(programme_path, 'JavaScriptKeywords.txt')
 
-# lexical_processing('D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\a3fdd0297615149512c89759f7fd6846', 'JavaScriptKeywords.txt')
+# print lexical_processing('D:\\encrypted_obfuscated_Javascript_programme_analysis\\NormalProgrammes\\Initial.js', 'JavaScriptKeywords.txt', True)[0]
 
 # test_string = '\n\
 # a'
