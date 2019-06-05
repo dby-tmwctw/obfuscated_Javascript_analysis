@@ -106,7 +106,7 @@ def human_readable_identifier_detection(identifier):
         for exception in exceptions_set:
             if (identifier.find(exception) != -1):
                 return True
-        print 'Variable not human readable', identifier
+        # print 'Variable not human readable', identifier
         return False
 
 # human_readable_identifier_detection('X08yhffhg7xkxf')
@@ -312,7 +312,7 @@ def analyse_lexical_modes(programme, character_map):
                 lexical_index += 1
                 continue
         elif (programme[lexical_index][2] == character_map['identifier']):
-            if (len(programme[lexical_index][0]) == 1):
+            if (len(programme[lexical_index][0]) == 1) and (programme[lexical_index][0] != 'i') and (programme[lexical_index][0] != 'j'):
                 single_character_count += 1
             if (not (programme[lexical_index][0] in identifier_set)) and (not (human_readable_identifier_detection(programme[lexical_index][0]))):
                 not_readable_count += 1
@@ -324,53 +324,12 @@ def analyse_lexical_modes(programme, character_map):
         lexical_modes.add('Mode 20')
     if (total_indexing_count > 0) and ((suspicious_indexing_count / float(total_indexing_count)) > 0.2):
         lexical_modes.add('Mode 9')
-    if (not_readable_count > 3):
+    if (not_readable_count > 5):
         lexical_modes.add('Mode 23')
-    if (single_character_count > 50):
+    if (len(identifier_set) > 15) and (single_character_count > len(identifier_set)):
         lexical_modes.add('Mode 24')
     # print identifier_set
     return lexical_modes
-
-# def analyse_string1(string_list):
-#     escaped_string_count = 0
-#     for string in string_list:
-#         if (string.find('\\x') != -1):
-#             escaped_string_count += 1
-#         percentage_count = len(re.findall(r"\%[0-9a-fA-F][0-9a-fA-F]", string))
-#         if (percentage_count > 5):
-#             print 'Mode 6'
-#             return True
-#         string_length = len(string)
-#         if (string_length > 25):
-#             escape_count = len(re.findall(r"\\x", string))
-#             # print escape_count
-#             if (escape_count == (string_length / 5)):
-#                 print 'Mode 4-\\x escape'
-#                 return True
-#             elif (escape_count > 100):
-#                 print 'Mode 11'
-#                 return True
-#             if (string_length > 35):
-#                 if (string.isdigit()):
-#                     print 'Mode 7'
-#                     return True
-#                 if (string_length > 50):
-#                     heximal_number_count = len(re.findall(r"[0-9a-fA-F]", string))
-#                     if (heximal_number_count == string_length):
-#                         print 'Mode 4-heximal number'
-#                         return True
-#                     split_number_count_hash = len(re.findall(r"[0-9]*\#", string))
-#                     split_number_count_colon = len(re.findall(r"[0-9]*\:", string))
-#                     split_number_count_comma = len(re.findall(r"[0-9]*\,", string))
-#                     split_number_count_chracter = len(re.findall(r"[0-9]*[n]", string))
-#                     maximum_split_number = max(split_number_count_hash, split_number_count_colon, split_number_count_comma)
-#                     if (maximum_split_number > 25):
-#                         print 'Mode 5'
-#                         return True
-#     if (escaped_string_count > 60):
-#         print 'Mode 8'
-#         return True
-#     return False
 
 def analyse_string(string_list):
     string_modes = set([])
@@ -416,9 +375,9 @@ def mode_analysis(content_path, keyword_path):
     detected_modes = set([])
     programme, lexical_result, character_map, string_list = initialise(content_path, keyword_path)
     # print lexical_result
-    # detected_modes |= analyse_mode1(programme)
+    detected_modes |= analyse_mode1(programme)
     detected_modes |= analyse_lexical_modes(lexical_result, character_map)
-    # detected_modes |= analyse_string(string_list)
+    detected_modes |= analyse_string(string_list)
     return detected_modes
 
 # print ('aaaaasdfaew\naabc\naa'.count('\n'))
@@ -496,13 +455,14 @@ Mode14Programmes = ['0bc595a9d7c77fea81d355cfac04cf28','00bd3cda5a94327755fb107b
 #     mode_analysis(programme_path, 'JavaScriptKeywords.txt')
 
 # error_count = 0
-# for root, dirs, files in os.walk('D:\\encrypted_obfuscated_Javascript_programme_analysis\\NormalProgrammes'):
-#     for file in files:
-#         print file, '-----------------------------------------------'
-#         programme_path = 'D:\\encrypted_obfuscated_Javascript_programme_analysis\\NormalProgrammes\\' + file
-#         if ('Mode 23' in mode_analysis(programme_path, 'JavaScriptKeywords.txt')):
-#             error_count += 1
-#             print 'Random variable name detected in', file, '-----------------'
-#         else:
-#             print 'Normal', file
+for root, dirs, files in os.walk('D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus'):
+    for file in files:
+        print file, '-----------------------------------------------'
+        programme_path = 'D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\' + file
+        print mode_analysis(programme_path, 'JavaScriptKeywords.txt')
+        # if ('Mode 24' in mode_analysis(programme_path, 'JavaScriptKeywords.txt')):
+        #     error_count += 1
+        #     print 'Too many single characters', file, '-----------------'
+        # else:
+        #     print 'Normal', file
 # print error_count
