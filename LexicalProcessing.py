@@ -43,6 +43,7 @@ def initialize(content_path, keyword_path):
     keyword_string = keyword_document.read()
     keyword_list = list(keyword_string.split())
     keyword_set = set(keyword_list)
+    # print keyword_set
 
     # Escape mapping
     escape_map = {}
@@ -253,7 +254,7 @@ def parse_number(content):
     a number. If so, return a string representation of that number.
     '''
     hexical_number = set(['a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F'])
-    if ((content[0].isdigit()) or (content[0] == '.')):
+    if ((content[0].isdigit()) or ((content[0] == '.') and (content[1].isdigit()))):
         number = ''
         number += content[0]
         scientific_representation = False
@@ -459,7 +460,7 @@ def lexical_processing(content_path, keyword_path, debug = False):
 #         programme_path = 'D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\' + file
 #         lexical_processing(programme_path, 'JavaScriptKeywords.txt')
 
-# print lexical_processing('D:\\encrypted_obfuscated_Javascript_programme_analysis\\NormalProgrammes\\Initial.js', 'JavaScriptKeywords.txt', True)[0]
+# print lexical_processing('D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\js_4385.txt', 'JavaScriptKeywords.txt', True)[0]
 
 # test_string = '\n\
 # a'

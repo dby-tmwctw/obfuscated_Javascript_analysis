@@ -10,24 +10,44 @@ def initialise(content_path, keyword_path):
     test_object = open(content_path)
     content = test_object.read()
     lexical_result, character_map, string_list = lexical_processing(content_path, keyword_path)
-    return content, lexical_result, character_map, string_list
+    mode_dictionary = {}
+    mode_dictionary['Minimisation'] = 0
+    mode_dictionary['Exceedingly long mapping'] = 0
+    mode_dictionary['Keyword Concatenation'] = 0
+    mode_dictionary['Exceedingly long heximal string'] = 0
+    mode_dictionary['Exceedingly long \\x escape string'] = 0
+    mode_dictionary['Number encoded script'] = 0
+    mode_dictionary['Abnormal % escape string'] = 0
+    mode_dictionary['Continuous number string'] = 0
+    mode_dictionary['\\x escaped string count'] = 0
+    mode_dictionary['Expression replacing number'] = 0
+    mode_dictionary['Too much \\x escape characters in string'] = 0
+    mode_dictionary['Exceedingly long array'] = 0
+    mode_dictionary['Function replacing assignment'] = 0
+    mode_dictionary['Abnormal string concatenation'] = 0
+    mode_dictionary['Random Variable Name'] = 0
+    mode_dictionary['Too much single variable'] = 0
+    return content, lexical_result, character_map, string_list, mode_dictionary
 
-def analyse_mode1(programme):
+def analyse_mode1(programme, mode_dictionary):
     if (len(programme) < 1000):
-        if (programme.count('\n') > (len(programme) / 100)):
-            return set([])
-        else:
-            return set(['Mode 1'])
+        if (programme.count('\n') < (len(programme) / 100)):
+            mode_dictionary['Minimisation'] += 1
+            # return set([])
+        # else:
+        #     return set(['Mode 1'])
     else:
         start = 0
         index = 1000
         while index < len(programme):
             buffer = programme[start:index]
             if (buffer.count('\n') < 10):
-                return set(['Mode 1'])
+                mode_dictionary['Minimisation'] += 1
+                break
+                # return set(['Mode 1'])
             start += 1
             index += 1
-    return set([])
+    # return set([])
 
 def pair_detection(programme, lexical_index, character_map):
     '''
@@ -247,10 +267,10 @@ def detect_mode9(programme, lexical_index, character_map):
             return True, lexical_index_now, 1
 
 
-def analyse_lexical_modes(programme, character_map):
-    lexical_modes = set([])
+def analyse_lexical_modes(programme, character_map, mode_dictionary):
+    # lexical_modes = set([])
     lexical_index = 0
-    simple_function_count = 0
+    # simple_function_count = 0
     total_indexing_count = 0
     suspicious_indexing_count = 0
     total_identifier_count = 0
@@ -263,7 +283,7 @@ def analyse_lexical_modes(programme, character_map):
             if (programme[lexical_index+2][2] == character_map['{']):
                 mode2_indicator, lexical_index_now = detect_mode2(programme, lexical_index, character_map)
                 if (mode2_indicator):
-                    lexical_modes.add('Mode 2')
+                    mode_dictionary['Exceedingly long mapping'] += 1
                     lexical_index = lexical_index_now + 1
                     continue
                 else:
@@ -272,7 +292,7 @@ def analyse_lexical_modes(programme, character_map):
             elif (((programme[lexical_index+2][2] == character_map['new']) and (programme[lexical_index+3][2] == character_map['Array']) and (programme[lexical_index+4][2] == character_map['('])) or (programme[lexical_index+2][2] == character_map['['])):
                 mode13_indicator, lexical_index_now = detect_mode13(programme, lexical_index, character_map)
                 if (mode13_indicator):
-                    lexical_modes.add('Mode 13')
+                    mode_dictionary['Exceedingly long array'] += 1
                     lexical_index = lexical_index_now + 1
                     continue
                 else:
@@ -282,7 +302,7 @@ def analyse_lexical_modes(programme, character_map):
             # print 'Function detected'
             mode20_indicator, lexical_index_now = simple_function_detection(programme, lexical_index, character_map)
             if (mode20_indicator):
-                simple_function_count += 1
+                mode_dictionary['Function replacing assignment'] += 1
                 lexical_index = lexical_index_now + 1
                 continue
             else:
@@ -291,7 +311,7 @@ def analyse_lexical_modes(programme, character_map):
         elif (programme[lexical_index][2] == character_map['+']) and (programme[lexical_index+1][2] == character_map['(']):
             mode22_indicator, lexical_index_now = detect_mode22(programme, lexical_index, character_map)
             if (mode22_indicator):
-                lexical_modes.add('Mode 22')
+                mode_dictionary['Abnormal string concatenation'] += 1
                 lexical_index = lexical_index_now + 1
                 continue
             else:
@@ -305,7 +325,7 @@ def analyse_lexical_modes(programme, character_map):
                 total_indexing_count += 1
                 if (type == 2):
                     # print 'Suspicious indexing detected'
-                    suspicious_indexing_count += 1
+                    mode_dictionary['Expression replacing number'] += 1
                 lexical_index = lexical_index_now + 1
                 continue
             else:
@@ -315,24 +335,34 @@ def analyse_lexical_modes(programme, character_map):
             if (len(programme[lexical_index][0]) == 1) and (programme[lexical_index][0] != 'i') and (programme[lexical_index][0] != 'j'):
                 single_character_count += 1
             if (not (programme[lexical_index][0] in identifier_set)) and (not (human_readable_identifier_detection(programme[lexical_index][0]))):
-                not_readable_count += 1
+                mode_dictionary['Random Variable Name'] += 1
             identifier_set.add(programme[lexical_index][0])
+        elif (programme[lexical_index][2] == character_map['String']) and (programme[lexical_index+1][2] == character_map['.']) and (programme[lexical_index+2][2] == character_map['fromCharCode']):
+            lexical_index = lexical_index + 4
+            number_count = 0
+            while (programme[lexical_index][2] != character_map[')']) and (lexical_index < len(programme)):
+                if (programme[lexical_index][2] == character_map['number']):
+                    number_count += 1
+                lexical_index += 1
+                # print lexical_index
+            if (number_count > 50):
+                mode_dictionary['Number encoded script'] += 1
         lexical_index += 1
     # print simple_function_count
     # print character_map['function']
-    if (simple_function_count > 10):
-        lexical_modes.add('Mode 20')
-    if (total_indexing_count > 0) and ((suspicious_indexing_count / float(total_indexing_count)) > 0.2):
-        lexical_modes.add('Mode 9')
-    if (not_readable_count > 5):
-        lexical_modes.add('Mode 23')
+    # if (simple_function_count > 10):
+    #     lexical_modes.add('Mode 20')
+    # if (total_indexing_count > 0) and ((suspicious_indexing_count / float(total_indexing_count)) > 0.2):
+    #     lexical_modes.add('Mode 9')
+    # if (not_readable_count > 5):
+    #     lexical_modes.add('Mode 23')
     if (len(identifier_set) > 15) and (single_character_count > len(identifier_set)):
-        lexical_modes.add('Mode 24')
+        mode_dictionary['Too much single variable'] += 1
     # print identifier_set
-    return lexical_modes
+    # return lexical_modes
 
-def analyse_string(string_list):
-    string_modes = set([])
+def analyse_string(string_list, mode_dictionary):
+    # string_modes = set([])
     escaped_string_count = 0
     string_list_length = len(string_list)
     for string in string_list:
@@ -345,7 +375,6 @@ def analyse_string(string_list):
         for i in range(0, string_length):
             character_count[string[i]] += 1
             if (i < string_length - 2) and (string[i] == '\\') and (string[i+1] == 'x'):
-                escaped_string_count += 1
                 escape_count += 1
             if (string[i].isdigit()):
                 digit_count += 1
@@ -354,31 +383,36 @@ def analyse_string(string_list):
             if (i < string_length - 3) and (string[i] == '%') and (string[i+1].isdigit()) and (string[i+2].isdigit()):
                 percentage_count += 1
         if (percentage_count > 5):
-            string_modes.add('Mode 6')
+            mode_dictionary['Abnormal % escape string'] += 1
         if (string_length > 25) and (escape_count == (string_length / 5)):
-            string_modes.add('Mode 4-\\x escape')
+            mode_dictionary['Exceedingly long \\x escape string'] += 1
+        if (escape_count > 0):
+            mode_dictionary['\\x escaped string count'] += 1
         if (escape_count > 100):
-            string_modes.add('Mode 11')
+            mode_dictionary['Too much \\x escape characters in string'] += 1
         if (string_length > 35) and (digit_count == string_length):
-            string_modes.add('Mode 7')
+            mode_dictionary['Continuous number string'] += 1
         if (string_length > 50) and ((digit_count + hex_digit_count) == string_length):
-            string_modes.add('Mode 4-heximal number')
+            mode_dictionary['Exceedingly long heximal string'] += 1
         if (string_length > 500):
             for character in character_count.keys():
                 if (character_count[character] > (string_length / 4)):
-                    string_modes.add('Mode 5')
-    if (escaped_string_count > 60):
-        string_modes.add('Mode 8')
-    return string_modes
+                    mode_dictionary['Number encoded script'] += 1
+    # if (escaped_string_count > 60):
+    #     mode_dictionary['Too much \\x escaped string'] += 1
+    # return string_modes
 
 def mode_analysis(content_path, keyword_path):
-    detected_modes = set([])
-    programme, lexical_result, character_map, string_list = initialise(content_path, keyword_path)
+    # detected_modes = set([])
+    programme, lexical_result, character_map, string_list, mode_dictionary = initialise(content_path, keyword_path)
     # print lexical_result
-    detected_modes |= analyse_mode1(programme)
-    detected_modes |= analyse_lexical_modes(lexical_result, character_map)
-    detected_modes |= analyse_string(string_list)
-    return detected_modes
+    # detected_modes |= analyse_mode1(programme, mode_dictionary)
+    # detected_modes |= analyse_lexical_modes(lexical_result, character_map, mode_dictionary)
+    # detected_modes |= analyse_string(string_list, mode_dictionary)
+    analyse_mode1(programme, mode_dictionary)
+    analyse_lexical_modes(lexical_result, character_map, mode_dictionary)
+    analyse_string(string_list, mode_dictionary)
+    return mode_dictionary
 
 # print ('aaaaasdfaew\naabc\naa'.count('\n'))
 Mode1Programmes = ['0a0e10988e66bffe2be4fb6d62760d73', '0a7b662dba064819a1e3c762fadb697b',
@@ -450,19 +484,24 @@ Mode16Programmes = ['0d0f8c58b0ad357b0510e0da264afb7d']
 Mode14Programmes = ['0bc595a9d7c77fea81d355cfac04cf28','00bd3cda5a94327755fb107b1af8a570',
 '0d0f8c58b0ad357b0510e0da264afb7d']
 
+# print mode_analysis('D:\\encrypted_obfuscated_JavaScript_programme_analysis\\Virus\\js_4385.txt', 'JavaScriptKeywords.txt')
+
 # for programme in Mode9Programmes:
 #     programme_path = 'D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\' + programme
 #     mode_analysis(programme_path, 'JavaScriptKeywords.txt')
 
-# error_count = 0
-for root, dirs, files in os.walk('D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus'):
-    for file in files:
-        print file, '-----------------------------------------------'
-        programme_path = 'D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\' + file
-        print mode_analysis(programme_path, 'JavaScriptKeywords.txt')
-        # if ('Mode 24' in mode_analysis(programme_path, 'JavaScriptKeywords.txt')):
-        #     error_count += 1
-        #     print 'Too many single characters', file, '-----------------'
-        # else:
-        #     print 'Normal', file
-# print error_count
+# # error_count = 0
+# for root, dirs, files in os.walk('D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus'):
+#     for file in files:
+#         print file, '-----------------------------------------------'
+#         programme_path = 'D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\' + file
+#         mode_dictionary = mode_analysis(programme_path, 'JavaScriptKeywords.txt')
+#         for key in mode_dictionary.keys():
+#             if (mode_dictionary[key] > 0):
+#                 print key+':', mode_dictionary[key]
+#         # if ('Mode 24' in mode_analysis(programme_path, 'JavaScriptKeywords.txt')):
+#         #     error_count += 1
+#         #     print 'Too many single characters', file, '-----------------'
+#         # else:
+#         #     print 'Normal', file
+# # print error_count
