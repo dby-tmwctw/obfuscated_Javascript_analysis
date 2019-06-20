@@ -2,6 +2,7 @@
 
 from collections import *
 import os
+import operator
 
 '''
 输入输出定义：
@@ -82,7 +83,7 @@ def initialize(content_path, keyword_path):
     character_map = defaultdict(int)
     for i in range(1, len(all_character_keyword) + 1):
         character_map[all_character_keyword[i-1]] = i
-    character_keyword_length = len(character_map.keys())
+    character_keyword_length = max(character_map.values())
     string_signature = character_keyword_length + 1
     identifier_signature = character_keyword_length + 2
     number_signature = character_keyword_length + 3
@@ -91,10 +92,10 @@ def initialize(content_path, keyword_path):
     character_map['identifier'] = identifier_signature
     character_map['number'] = number_signature
     character_map['regex'] = regex_signature
-    # print character_map
+    # print sorted(character_map.items(), key=operator.itemgetter(1))
 
 
-    return content, keyword_set, escape_map, character_map
+    return content, keyword_set, escape_map, character_map, set(operational_character)
 
 def get_character_map(keyword_path):
     keyword_document = open(keyword_path)
@@ -254,7 +255,7 @@ def parse_number(content):
     a number. If so, return a string representation of that number.
     '''
     hexical_number = set(['a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F'])
-    if ((content[0].isdigit()) or ((content[0] == '.') and (content[1].isdigit()))):
+    if ((content[0].isdigit()) or ((len(content) > 1) and (content[0] == '.') and (content[1].isdigit()))):
         number = ''
         number += content[0]
         scientific_representation = False
@@ -311,7 +312,7 @@ def parse_regex(content, token, character_map):
         while index < len(content):
             # print content[index]
             regex += content[index]
-            if ((content[index] == '/') and (square_brackets == 0) and (slash_detector == False) or ((content[index-1] == '/') and (content[index] in regex_flag))):
+            if ((content[index] == '/') and (square_brackets == 0) and (slash_detector == False) or ((content[index-1] == '/') and (content[index] in regex_flag) and (len(regex) > 2))):
                 break
             if (content[index] == '['):
                 square_brackets += 1
@@ -378,13 +379,16 @@ def lexical_processing(content_path, keyword_path, debug = False):
     numbers are we going to use, for some special cases we use strings to
     represent the token number
     '''
-    content, keyword_set, escape_map, character_map = initialize(content_path, keyword_path)
+    content, keyword_set, escape_map, character_map, operational_character = initialize(content_path, keyword_path)
     meaningless_value = set([' ', '\n', '\r', '\b', '\f', unichr(0x0009), '\xbb', '\xbf', '\xef'])
     i = 0
     content_length = len(content)
     token_list = []
     token_list.append(tuple([None, None, int(len(character_map.keys()) + 2)]))
     string_list = []
+    identifier_list = []
+    operational_count = 0
+    plus_equal_count = 0
     while i < content_length:
         if (debug):
             print token_list[len(token_list)-1]
@@ -414,6 +418,7 @@ def lexical_processing(content_path, keyword_path, debug = False):
                 i = i + identifier_length
             else:
                 token_list.append(tuple([identifier, 'identifier', character_map['identifier']]))
+                identifier_list.append(identifier)
                 i = i + identifier_length
             continue
         flag4, number, number_length= parse_number(content[i:])
@@ -431,6 +436,10 @@ def lexical_processing(content_path, keyword_path, debug = False):
         flag6, character, character_length= parse_character(content[i:], character_map)
         if (flag6):
             token_list.append(tuple([character, 'character', character_map[character]]))
+            if (character in operational_character):
+                operational_count += 1
+                if ((character == '+') or (character == '=')):
+                    plus_equal_count += 1
             i = i + character_length
             continue
         token_list.append(tuple([content[i], 'invalid character', len(character_map.keys()) + 1]))
@@ -438,7 +447,7 @@ def lexical_processing(content_path, keyword_path, debug = False):
         # print repr(content[i:i+20])
         # raise Exception, 'Character Not Valid'
     token_list.pop(0)
-    return token_list, character_map, string_list
+    return token_list, character_map, string_list, identifier_list, (0 if operational_count == 0 else plus_equal_count / float(operational_count))
 
 # print lexical_processing('D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\0b8c85bb8a1624e8a5a2a64b412d91fe', 'D:\\encrypted_obfuscated_Javascript_programme_analysis\\JavaScriptKeywords.txt')
 # Mode1Programmes = ['0a0e10988e66bffe2be4fb6d62760d73', '0a7b662dba064819a1e3c762fadb697b',
@@ -460,7 +469,7 @@ def lexical_processing(content_path, keyword_path, debug = False):
 #         programme_path = 'D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\' + file
 #         lexical_processing(programme_path, 'JavaScriptKeywords.txt')
 
-# print lexical_processing('D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\js_4385.txt', 'JavaScriptKeywords.txt', True)[0]
+# print lexical_processing('E:\\encrypted_obfuscated_Javascript_programme_analysis\\NormalProgrammes\\js_1430.txt', 'JavaScriptKeywords.txt', True)[0]
 
 # test_string = '\n\
 # a'

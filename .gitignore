@@ -2,3 +2,8 @@
 *.pyc
 Virus/
 NormalProgrammes/
+Keyword Concatenation/
+Temporary/
+venv/
+Env/
+.idea/

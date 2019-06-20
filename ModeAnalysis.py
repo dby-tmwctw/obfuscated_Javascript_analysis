@@ -2,6 +2,7 @@
 
 import re
 import os
+import operator
 from collections import *
 from LexicalProcessing import lexical_processing
 
@@ -9,7 +10,7 @@ def initialise(content_path, keyword_path):
     # Read in content
     test_object = open(content_path)
     content = test_object.read()
-    lexical_result, character_map, string_list = lexical_processing(content_path, keyword_path)
+    lexical_result, character_map, string_list, identifier_set, plus_equal_percentage = lexical_processing(content_path, keyword_path)
     mode_dictionary = {}
     mode_dictionary['Minimisation'] = 0
     mode_dictionary['Exceedingly long mapping'] = 0
@@ -24,9 +25,15 @@ def initialise(content_path, keyword_path):
     mode_dictionary['Too much \\x escape characters in string'] = 0
     mode_dictionary['Exceedingly long array'] = 0
     mode_dictionary['Function replacing assignment'] = 0
-    mode_dictionary['Abnormal string concatenation'] = 0
+    mode_dictionary['Abnormal string concatenation 1'] = 0
     mode_dictionary['Random Variable Name'] = 0
     mode_dictionary['Too much single variable'] = 0
+    mode_dictionary['Continuous fillText'] = 0
+    mode_dictionary['XOR indicator'] = 0
+    mode_dictionary['XOR encoding'] = 0
+    mode_dictionary['Variable name too long'] = 0
+    mode_dictionary['Too much whitespace in string'] = 0
+    mode_dictionary['Character seperated programme'] = 0
     return content, lexical_result, character_map, string_list, mode_dictionary
 
 def analyse_mode1(programme, mode_dictionary):
@@ -129,26 +136,6 @@ def human_readable_identifier_detection(identifier):
         # print 'Variable not human readable', identifier
         return False
 
-# human_readable_identifier_detection('X08yhffhg7xkxf')
-# human_readable_identifier_detection('NCMCJKVczcCUyiV')
-# human_readable_identifier_detection('rfhkryrz')
-# human_readable_identifier_detection('bkrznnre')
-# human_readable_identifier_detection('rwk')
-# human_readable_identifier_detection('zkFgsm')
-# human_readable_identifier_detection('RiDojs')
-# human_readable_identifier_detection('pztgt')
-# human_readable_identifier_detection('ibt')
-# human_readable_identifier_detection('mwvjw')
-# human_readable_identifier_detection('AC_AX_RunContent')
-# human_readable_identifier_detection('uikb')
-# human_readable_identifier_detection('xjkus')
-# human_readable_identifier_detection('key_set')
-# human_readable_identifier_detection('character_map')
-# human_readable_identifier_detection('fromCharCode')
-# human_readable_identifier_detection('logHuman')
-# human_readable_identifier_detection('xhyrgs')
-
-
 def detect_mode2(programme, lexical_index, character_map):
     lexical_index_now = lexical_index + 3
     key_value_pair = 0
@@ -229,7 +216,7 @@ def detect_mode9(programme, lexical_index, character_map):
     lexical_index_now = lexical_index + 1
     state = 0
     expression_record = 0
-    expression_character_set = set([character_map['+'], character_map['-']])
+    expression_character_set = set([character_map['+'], character_map['-'], character_map['*'], character_map['/']])
     while (programme[lexical_index_now][2] != character_map[']']):
         if (state == 0):
             if ((programme[lexical_index_now][2] == character_map['identifier']) or (programme[lexical_index_now][2] == character_map['number'])):
@@ -276,9 +263,13 @@ def analyse_lexical_modes(programme, character_map, mode_dictionary):
     total_identifier_count = 0
     not_readable_count = 0
     single_character_count = 0
+    continuous_fill_text_count = 0
+    another_count = 0
     identifier_set = set([])
+    # print mode_dictionary['XOR indicator']
     while (lexical_index < (len(programme) - 4)):
         # print lexical_index
+        # print programme[lexical_index]
         if (programme[lexical_index][2] == character_map['identifier']) and (programme[lexical_index+1][2] == character_map['=']):
             if (programme[lexical_index+2][2] == character_map['{']):
                 mode2_indicator, lexical_index_now = detect_mode2(programme, lexical_index, character_map)
@@ -311,7 +302,7 @@ def analyse_lexical_modes(programme, character_map, mode_dictionary):
         elif (programme[lexical_index][2] == character_map['+']) and (programme[lexical_index+1][2] == character_map['(']):
             mode22_indicator, lexical_index_now = detect_mode22(programme, lexical_index, character_map)
             if (mode22_indicator):
-                mode_dictionary['Abnormal string concatenation'] += 1
+                mode_dictionary['Abnormal string concatenation 1'] += 1
                 lexical_index = lexical_index_now + 1
                 continue
             else:
@@ -334,30 +325,70 @@ def analyse_lexical_modes(programme, character_map, mode_dictionary):
         elif (programme[lexical_index][2] == character_map['identifier']):
             if (len(programme[lexical_index][0]) == 1) and (programme[lexical_index][0] != 'i') and (programme[lexical_index][0] != 'j'):
                 single_character_count += 1
-            if (not (programme[lexical_index][0] in identifier_set)) and (not (human_readable_identifier_detection(programme[lexical_index][0]))):
-                mode_dictionary['Random Variable Name'] += 1
+            if (not (programme[lexical_index][0] in identifier_set)):
+                if (not (human_readable_identifier_detection(programme[lexical_index][0]))):
+                    mode_dictionary['Random Variable Name'] += 1
+                if (len(programme[lexical_index][0]) > 25):
+                    mode_dictionary['Variable name too long'] += 1
             identifier_set.add(programme[lexical_index][0])
         elif (programme[lexical_index][2] == character_map['String']) and (programme[lexical_index+1][2] == character_map['.']) and (programme[lexical_index+2][2] == character_map['fromCharCode']):
-            lexical_index = lexical_index + 4
-            number_count = 0
-            while (programme[lexical_index][2] != character_map[')']) and (lexical_index < len(programme)):
-                if (programme[lexical_index][2] == character_map['number']):
-                    number_count += 1
+            # print 'First Check'
+            # print character_map['^']
+            if (programme[lexical_index+6][2] == character_map['charCodeAt']):
+                # print 'entered'
+                lexical_index_now = lexical_index + 6
+                if (mode_dictionary['XOR indicator'] > 0):
+                    while (lexical_index_now < (len(programme) - 2)):
+                        # print programme[lexical_index_now]
+                        if (programme[lexical_index_now][2] == character_map['^']):
+                            break
+                        lexical_index_now += 1
+                    if (programme[lexical_index_now+1][2] == character_map['number']):
+                        mode_dictionary['XOR encoding'] += 1
+                        lexical_index = lexical_index_now + 2
+            else:
+                lexical_index = lexical_index + 4
+                number_count = 0
+                while (programme[lexical_index][2] != character_map[')']) and (lexical_index < len(programme)):
+                    if (programme[lexical_index][2] == character_map['number']):
+                        number_count += 1
+                    lexical_index += 1
+                    # print lexical_index
+                if (number_count > 50):
+                    mode_dictionary['Number encoded script'] += 1
+        elif (programme[lexical_index][2] == character_map['fillText']) and (programme[lexical_index+1][2] == character_map['(']):
+            # print 'Primary Check'
+            lexical_index += 2
+            # for i in range(0, 9):
+            #     print programme[lexical_index+i]
+            delimiter_stack = []
+            while (lexical_index < len(programme)):
+                if (programme[lexical_index][2] == character_map[',']) and (len(delimiter_stack) == 0):
+                    lexical_index += 1
+                    break
+                if ((programme[lexical_index][2] == character_map['(']) or (programme[lexical_index][2] == character_map['{']) or (programme[lexical_index][2] == character_map['['])):
+                    delimiter_stack.append(programme[lexical_index][2])
+                    lexical_index += 1
+                    continue
+                elif (len(delimiter_stack) > 0) and (programme[lexical_index][2] == (delimiter_stack[len(delimiter_stack)-1] + 1)):
+                    delimiter_stack.pop()
+                    lexical_index += 1
+                    continue
                 lexical_index += 1
-                # print lexical_index
-            if (number_count > 50):
-                mode_dictionary['Number encoded script'] += 1
+            # print programme[lexical_index], programme[lexical_index+1], programme[lexical_index+2], programme[lexical_index+3]
+            if (programme[lexical_index][0] == 0) and (programme[lexical_index+1][2] == character_map[',']) and (programme[lexical_index+2][0] == 0) and (programme[lexical_index+3][2] == character_map[')']):
+                # print 'Secondary Check'
+                another_count += 1
+            else:
+                another_count = 0
+            # print 'Now count', another_count
+            # print 'Maximum count', continuous_fill_text_count
+            if (another_count > continuous_fill_text_count):
+                continuous_fill_text_count = another_count
         lexical_index += 1
-    # print simple_function_count
-    # print character_map['function']
-    # if (simple_function_count > 10):
-    #     lexical_modes.add('Mode 20')
-    # if (total_indexing_count > 0) and ((suspicious_indexing_count / float(total_indexing_count)) > 0.2):
-    #     lexical_modes.add('Mode 9')
-    # if (not_readable_count > 5):
-    #     lexical_modes.add('Mode 23')
     if (len(identifier_set) > 15) and (single_character_count > len(identifier_set)):
         mode_dictionary['Too much single variable'] += 1
+    # mode_dictionary['Continuous fillText'] = continuous_fill_text_count
     # print identifier_set
     # return lexical_modes
 
@@ -365,23 +396,41 @@ def analyse_string(string_list, mode_dictionary):
     # string_modes = set([])
     escaped_string_count = 0
     string_list_length = len(string_list)
+    all_character_count = defaultdict(int)
+    total_length = 0
+    total_alpha_count = 0
+    hexical_number = set(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F'])
     for string in string_list:
         string_length = len(string)
+        total_length += string_length
         escape_count = 0
         digit_count = 0
         hex_digit_count = 0
         percentage_count = 0
+        XOR_count = 0
+        whitespace_count = 0
         character_count = defaultdict(int)
         for i in range(0, string_length):
             character_count[string[i]] += 1
+            if (string[i] != ' ') and (string[i] != '\\'):
+                if (string[i] == 'x') or (string[i] == 'u') and (string[i-1] == '\\'):
+                    pass
+                else:
+                    all_character_count[string[i]] += 1
             if (i < string_length - 2) and (string[i] == '\\') and (string[i+1] == 'x'):
                 escape_count += 1
             if (string[i].isdigit()):
                 digit_count += 1
+            if (string[i].isalpha()):
+                total_alpha_count += 1
             if (((ord(string[i]) > 96) and (ord(string[i]) < 103)) or ((ord(string[i]) > 64) and (ord(string[i]) < 71))):
                 hex_digit_count += 1
-            if (i < string_length - 3) and (string[i] == '%') and (string[i+1].isdigit()) and (string[i+2].isdigit()):
+            if (i < string_length - 3) and ((string[i] == '%') or (string[i] == '~')) and (string[i+1] in hexical_number) and (string[i+2] in hexical_number):
                 percentage_count += 1
+            if (i < string_length - 3) and (string[i] == "\'") and (string[i+1] in hexical_number) and (string[i+2] in hexical_number):
+                XOR_count += 1
+            if (string[i] == ' '):
+                whitespace_count += 1
         if (percentage_count > 5):
             mode_dictionary['Abnormal % escape string'] += 1
         if (string_length > 25) and (escape_count == (string_length / 5)):
@@ -394,24 +443,47 @@ def analyse_string(string_list, mode_dictionary):
             mode_dictionary['Continuous number string'] += 1
         if (string_length > 50) and ((digit_count + hex_digit_count) == string_length):
             mode_dictionary['Exceedingly long heximal string'] += 1
-        if (string_length > 500):
-            for character in character_count.keys():
-                if (character_count[character] > (string_length / 4)):
-                    mode_dictionary['Number encoded script'] += 1
+        if (string_length > 200):
+            value_list = character_count.values()
+            value_list.sort(reverse=True)
+            # print value_list
+            # print 'String length', string_length
+            if ((value_list[0] > (string_length * 0.25)) or ((value_list[0] > string_length * 0.2) and (value_list[1] > string_length * 0.2))) and ((digit_count + hex_digit_count) > (string_length * 0.2)):
+                # print 'Entered'
+                mode_dictionary['Number encoded script'] += 1
+            # for character in character_count.keys():
+            #     if (character_count[character] > ((string_length / 5) - 1)):
+            #         mode_dictionary['Number encoded script'] += 1
+        # print XOR_count
+        if (XOR_count > 5):
+            mode_dictionary['XOR indicator'] += 1
+        # print mode_dictionary['XOR indicator']
+        if (string_length > 10) and (whitespace_count > ((string_length / 2) - 1)):
+            mode_dictionary['Too much whitespace in string'] += 1
     # if (escaped_string_count > 60):
     #     mode_dictionary['Too much \\x escaped string'] += 1
+    value_list = all_character_count.values()
+    value_list.sort(reverse=True)
+    # print sorted(all_character_count.items(), key=operator.itemgetter(1), reverse=True)
+    # print total_alpha_count
+    # print total_length
+    if (len(value_list) > 0) and (total_length > 200) and (total_alpha_count > (total_length * 0.6)) and (mode_dictionary['Number encoded script'] == 0) and ((value_list[0] + value_list[1]) > (total_length / 4)):
+        mode_dictionary['Character seperated programme'] += 1
     # return string_modes
 
 def mode_analysis(content_path, keyword_path):
     # detected_modes = set([])
     programme, lexical_result, character_map, string_list, mode_dictionary = initialise(content_path, keyword_path)
     # print lexical_result
+    # print dict(character_map)
     # detected_modes |= analyse_mode1(programme, mode_dictionary)
     # detected_modes |= analyse_lexical_modes(lexical_result, character_map, mode_dictionary)
     # detected_modes |= analyse_string(string_list, mode_dictionary)
+    # print character_map['fillText']
     analyse_mode1(programme, mode_dictionary)
-    analyse_lexical_modes(lexical_result, character_map, mode_dictionary)
     analyse_string(string_list, mode_dictionary)
+    analyse_lexical_modes(lexical_result, character_map, mode_dictionary)
+    mode_dictionary.pop('XOR indicator')
     return mode_dictionary
 
 # print ('aaaaasdfaew\naabc\naa'.count('\n'))
@@ -458,7 +530,8 @@ Mode5Programmes = ['0a05f424b1908af2557d516b10c62a21','0a6fd674b29ae6f398e8ab220
 '0d9f72e8f51c760e99bea89ded22bf4c','0d47f2c51f97bf58e0ed4f1cc4fae52a',
 '0d58dc62c6886c13d749db53cce69c46','0d55283262ac89d37fd34bb3eb746c68',
 '00da63a10066ca0eea605e3fad3b231d','0db6dfe80b877e5598dadb487ffb986b',
-'00dd1c07fb998137da41a3adfdc1c8d4']
+'00dd1c07fb998137da41a3adfdc1c8d4','1109fa56bd889d24ff0a3cb72d8cf256',
+'11f52015371b2b225ff0d7ac4f58d078']
 
 Mode6Programmes = ['0a6edb058be48ffa9c730a81f6a03d8f','0a3679d658f853b79770058ef4a86c31',
 '0ad0f4a357e3fde1e2be90fdba9ebcd1','0d3c2276663f0cf19f276c6b8ce2dab4']
@@ -484,24 +557,43 @@ Mode16Programmes = ['0d0f8c58b0ad357b0510e0da264afb7d']
 Mode14Programmes = ['0bc595a9d7c77fea81d355cfac04cf28','00bd3cda5a94327755fb107b1af8a570',
 '0d0f8c58b0ad357b0510e0da264afb7d']
 
-# print mode_analysis('D:\\encrypted_obfuscated_JavaScript_programme_analysis\\Virus\\js_4385.txt', 'JavaScriptKeywords.txt')
+Mode30Programmes = ['040433fa3da408db638045c45fbd329d', '04915aad150f05cc2a326bffcfa49dd1',
+'06b49cb1d060a4234ee0d24394247221', '077a7b85357431a23fac83694d236e63',
+'0e9c17aac1428b4731c295fdc0570521', '0f10ca1fe5a043f95d66f89fd80872ae',
+'0fc52e779880c0bbd30f01385539e92c', '1075e313d841a506990424e4727d062d',
+'1108f6e383f2ad32935a9ac387a82778', '1182f539cf51a6c5c1a868254d55899b',
+'12e68c363d4f6187e114a42ca4aa944c']
 
-# for programme in Mode9Programmes:
+Mode31Programmes = ['04cf7bfb2967453f9e9e6ae9129ca462', '05469879b349d2789b199414bdff455a',
+'07e1a6f4d8170e14fcdb7056ba9ee110', '084722c41258f966fd17277ab19982f3',
+'087879efc11b36ad52e25a7edcf3e404', '08d3e3d1b1695be1d4e8562f7039bf0d',
+'0911a30efd419105670786fa5953f5ba', '12d962497c50466438dd890a7fa78006']
+
+Mode24Programmes = ['0037e7da0824b622436497f5c0d8f559', '007a1f9e03ae4b75e5c9f217cd2bac7c']
+
+# mode_analysis('D:\\encrypted_obfuscated_JavaScript_programme_analysis\\Virus\\0082d778f299dd11749e56d00b6c140a', 'JavaScriptKeywords.txt')
+# mode_analysis('D:\\encrypted_obfuscated_JavaScript_programme_analysis\\Virus\\0140c0a78b8515c9632153a30d25ba1a', 'JavaScriptKeywords.txt')
+# mode_analysis('D:\\encrypted_obfuscated_JavaScript_programme_analysis\\Virus\\0d396a4103e64e067a308667799b2966', 'JavaScriptKeywords.txt')
+
+# for programme in Mode24Programmes:
 #     programme_path = 'D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\' + programme
-#     mode_analysis(programme_path, 'JavaScriptKeywords.txt')
+#     print programme
+#     print mode_analysis(programme_path, 'JavaScriptKeywords.txt')
 
 # # error_count = 0
-# for root, dirs, files in os.walk('D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus'):
+# for root, dirs, files in os.walk('E:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus'):
 #     for file in files:
-#         print file, '-----------------------------------------------'
-#         programme_path = 'D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\' + file
-#         mode_dictionary = mode_analysis(programme_path, 'JavaScriptKeywords.txt')
-#         for key in mode_dictionary.keys():
-#             if (mode_dictionary[key] > 0):
-#                 print key+':', mode_dictionary[key]
-#         # if ('Mode 24' in mode_analysis(programme_path, 'JavaScriptKeywords.txt')):
-#         #     error_count += 1
-#         #     print 'Too many single characters', file, '-----------------'
+#         # print file, '-----------------------------------------------'
+#         # more_than_zero_count = 0
+#         programme_path = 'E:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\' + file
+#         # mode_dictionary = mode_analysis(programme_path, 'JavaScriptKeywords.txt')
+#         # for key in mode_dictionary.keys():
+#         #     if (mode_dictionary[key] > 0):
+#         #         more_than_zero_count += 1
+#         # if (more_than_zero_count == 0):
+#         #     print file, '-----------------------------------------------'
+#         if (mode_analysis(programme_path, 'JavaScriptKeywords.txt')['Character seperated programme'] > 0):
+#             print file, '------------------------------------------------'
 #         # else:
 #         #     print 'Normal', file
 # # print error_count
