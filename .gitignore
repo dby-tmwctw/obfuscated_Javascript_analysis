@@ -1,5 +1,7 @@
 *.js
 *.pyc
+*.zip
+*.rar
 Virus/
 NormalProgrammes/
 Keyword Concatenation/
@@ -7,3 +9,4 @@ Temporary/
 venv/
 Env/
 .idea/
+Abnormal String Concatenation/
