@@ -43,4 +43,5 @@ textarea	top	unescape	untaint
 window onblur	onclick	onerror	onfocus
 onkeydown	onkeypress	onkeyup	onmouseover
 onload	onmouseup	onmousedown	onsubmit
-fromCharCode fillText charCodeAt
+fromCharCode fillText charCodeAt charAt
+split join

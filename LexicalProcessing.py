@@ -303,7 +303,8 @@ def parse_regex(content, token, character_map):
     '''
     regex_flag = set(['g', 'm', 'i', 'y', 'u', 's'])
     # print token
-    if (content[0] == '/') and (content[1] != '>') and (token[1] != 'identifier') and (token[1] != 'number') and (token[2] != character_map[')']) and (token[2] != character_map[']']) and (token[2] != character_map['<']):
+    exception_set = set([character_map[')'], character_map[']'], character_map['<'], character_map['\\']])
+    if (content[0] == '/') and (content[1] != '>') and (token[1] != 'identifier') and (token[1] != 'number') and (token[2] not in exception_set) and ((token[2] < 44) or (token[2] > character_map['string'])):
         regex = ''
         regex += content[0]
         square_brackets = 0
@@ -347,9 +348,18 @@ def string_to_number(number):
         elif (number[1] == 'b'):
             return bin(int(number, 0))
         else:
-            return oct(int(number, 8))
+            try:
+                return oct(int(number, 8))
+            except ValueError:
+                try:
+                    return int(number)
+                except:
+                    return number
     if (index_dot == -1) and (index_e == -1) and (index_E == -1):
-        return int(number)
+        try:
+            return int(number)
+        except ValueError:
+            return number
     elif (index_e == -1):
         try:
             return float(number)
@@ -360,7 +370,7 @@ def string_to_number(number):
             base = float(number[:index_e])
             power = int(number[index_e+1:])
             return base * (10 ** power)
-        except ValueError:
+        except:
             return number
     else:
         try:
@@ -391,7 +401,7 @@ def lexical_processing(content_path, keyword_path, debug = False):
     plus_equal_count = 0
     while i < content_length:
         if (debug):
-            print token_list[len(token_list)-1]
+            print(token_list[len(token_list)-1])
         if (content[i] in meaningless_value):
             i += 1
             continue
@@ -449,7 +459,7 @@ def lexical_processing(content_path, keyword_path, debug = False):
     token_list.pop(0)
     return token_list, character_map, string_list, identifier_list, (0 if operational_count == 0 else plus_equal_count / float(operational_count))
 
-# print lexical_processing('D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\0b8c85bb8a1624e8a5a2a64b412d91fe', 'D:\\encrypted_obfuscated_Javascript_programme_analysis\\JavaScriptKeywords.txt')
+# print lexical_processing('E:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\02229548c6f6ed0d5a63caaa22ebf451', 'E:\\encrypted_obfuscated_Javascript_programme_analysis\\JavaScriptKeywords.txt')
 # Mode1Programmes = ['0a0e10988e66bffe2be4fb6d62760d73', '0a7b662dba064819a1e3c762fadb697b',
 #                    '0a89e057b47001aa96cbb9b350913cbc', '0a0408ceb46f34f230e333557328d2fc',
 #                    '0a6891b0e0e717445feb7d08c8e84b81', '0a74359f190c92a6c0f776034c08855a',
@@ -463,13 +473,16 @@ def lexical_processing(content_path, keyword_path, debug = False):
 #     programme_path = 'D:\encrypted_obfuscated_Javascript_programme_analysis\Virus\\' + programme
 #     lexical_processing(programme_path, 'JavaScriptKeywords.txt')
 
-# for root, dirs, files in os.walk('D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus'):
+# for root, dirs, files in os.walk('E:\\encrypted_obfuscated_Javascript_programme_analysis\\NormalProgrammes'):
 #     for file in files:
 #         print file, '-----------------------------------------'
-#         programme_path = 'D:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\' + file
-#         lexical_processing(programme_path, 'JavaScriptKeywords.txt')
+#         programme_path = 'E:\\encrypted_obfuscated_Javascript_programme_analysis\\NormalProgrammes\\' + file
+#         try:
+#             lexical_processing(programme_path, 'JavaScriptKeywords.txt')
+#         except:
+#             print lexical_processing(programme_path, 'JavaScriptKeywords.txt', True)[0]
 
-# print lexical_processing('E:\\encrypted_obfuscated_Javascript_programme_analysis\\NormalProgrammes\\js_1430.txt', 'JavaScriptKeywords.txt', True)[0]
+# print lexical_processing('E:\\encrypted_obfuscated_Javascript_programme_analysis\\NormalProgrammes\\js_6000.txt', 'JavaScriptKeywords.txt', True)[0]
 
 # test_string = '\n\
 # a'
