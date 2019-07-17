@@ -399,6 +399,8 @@ def lexical_processing(content_path, keyword_path, debug = False):
     identifier_list = []
     operational_count = 0
     plus_equal_count = 0
+    square_bracket_count = 0
+    character_count = 0
     while i < content_length:
         if (debug):
             print(token_list[len(token_list)-1])
@@ -445,6 +447,9 @@ def lexical_processing(content_path, keyword_path, debug = False):
             continue
         flag6, character, character_length= parse_character(content[i:], character_map)
         if (flag6):
+            character_count += 1
+            if ((character == '[') or (character == ']')):
+                square_bracket_count += 1
             token_list.append(tuple([character, 'character', character_map[character]]))
             if (character in operational_character):
                 operational_count += 1
@@ -457,36 +462,4 @@ def lexical_processing(content_path, keyword_path, debug = False):
         # print repr(content[i:i+20])
         # raise Exception, 'Character Not Valid'
     token_list.pop(0)
-    return token_list, character_map, string_list, identifier_list, (0 if operational_count == 0 else plus_equal_count / float(operational_count))
-
-# print lexical_processing('E:\\encrypted_obfuscated_Javascript_programme_analysis\\Virus\\02229548c6f6ed0d5a63caaa22ebf451', 'E:\\encrypted_obfuscated_Javascript_programme_analysis\\JavaScriptKeywords.txt')
-# Mode1Programmes = ['0a0e10988e66bffe2be4fb6d62760d73', '0a7b662dba064819a1e3c762fadb697b',
-#                    '0a89e057b47001aa96cbb9b350913cbc', '0a0408ceb46f34f230e333557328d2fc',
-#                    '0a6891b0e0e717445feb7d08c8e84b81', '0a74359f190c92a6c0f776034c08855a',
-#                    '0aac8b7a77c8da292e612d63077d280c', '0aec8291a01f84dbd8ea186494937f6a',
-#                    '00bd3cda5a94327755fb107b1af8a570', '0ce0f66bae012600e943a3d32638d58c',
-#                    '0d7ab883292d9b0356bcc1a1246e7b1b', '0d9faee0c0b21b290bc33648ac0313ea',
-#                    '0d45b6318f8d1b9dad2faa6b6703774f', '0d90839bd4c9bcb62795a8a1f20ce7bd',
-#                    '0db0c7164e7f6a734957991166513539', '0db6dfe80b877e5598dadb487ffb986b']
-# for programme in Mode1Programmes:
-#     print programme, '-------------------------------------------'
-#     programme_path = 'D:\encrypted_obfuscated_Javascript_programme_analysis\Virus\\' + programme
-#     lexical_processing(programme_path, 'JavaScriptKeywords.txt')
-
-# for root, dirs, files in os.walk('E:\\encrypted_obfuscated_Javascript_programme_analysis\\NormalProgrammes'):
-#     for file in files:
-#         print file, '-----------------------------------------'
-#         programme_path = 'E:\\encrypted_obfuscated_Javascript_programme_analysis\\NormalProgrammes\\' + file
-#         try:
-#             lexical_processing(programme_path, 'JavaScriptKeywords.txt')
-#         except:
-#             print lexical_processing(programme_path, 'JavaScriptKeywords.txt', True)[0]
-
-# print lexical_processing('E:\\encrypted_obfuscated_Javascript_programme_analysis\\NormalProgrammes\\js_6000.txt', 'JavaScriptKeywords.txt', True)[0]
-
-# test_string = '\n\
-# a'
-# print repr(test_string)
-#
-# for i in range(0, len(test_string)):
-#     print repr(test_string[i])
+    return token_list, character_map, string_list, identifier_list, (0 if operational_count == 0 else plus_equal_count / float(operational_count)), (0 if character_count == 0 else square_bracket_count / float(content_length))

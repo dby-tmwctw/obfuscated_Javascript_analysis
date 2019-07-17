@@ -2,6 +2,7 @@
 *.pyc
 *.zip
 *.rar
+*.ipynb
 Virus/
 NormalProgrammes/
 Keyword Concatenation/
@@ -12,5 +13,15 @@ Env/
 Abnormal String Concatenation/
 normal/
 NormalTemporary/
+Result/
+TestSet/
+Without Concatenation/
+Without Concatenation1/
+Abnormal No Detection/
+Filtered Normal Programme/
+Model Testing/
 LexicalProcessingPython3.py
 PlotResults.py
+svm.py
+Model Test Result.png
+Testing.py

