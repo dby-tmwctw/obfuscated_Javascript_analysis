@@ -1096,7 +1096,7 @@ def mode_analysis(content_path, keyword_path):
     programme, lexical_result, character_map, string_list, mode_dictionary, identifier_list, plus_equal_percentage, square_bracket_percentage = initialise(content_path, keyword_path)
     identifier_set = set(identifier_list)
     analyse_mode1(programme, mode_dictionary)
-    analyse_dean_edward_packer_head(programme, mode_dictionary)
+    # analyse_dean_edward_packer_head(programme, mode_dictionary)
     analyse_string(string_list, mode_dictionary)
     analyse_lexical_modes(lexical_result, character_map, mode_dictionary, identifier_set)
     analyse_identifier(identifier_set, identifier_list, mode_dictionary)

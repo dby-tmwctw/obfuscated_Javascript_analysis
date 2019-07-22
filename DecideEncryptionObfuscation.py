@@ -187,4 +187,4 @@ def get_model():
     get_classifier(get_data(abnormal_path, normal_path, keyword_path))
 
 # test_model(get_data('E:\\encrypted_obfuscated_JavaScript_programme_analysis\\Virus', 'E:\\encrypted_obfuscated_JavaScript_programme_analysis\\NormalProgrammes', 'JavaScriptKeywords.txt'))
-# get_model()
+get_model()
