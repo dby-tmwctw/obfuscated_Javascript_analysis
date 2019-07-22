@@ -118,6 +118,10 @@ def initialise(content_path, keyword_path):
     mode_dictionary['Mysterious mode 1'] = 0
     mode_dictionary['Too much special characters in string'] = 0
     mode_dictionary['Special character string'] = 0
+    mode_dictionary['Dean Edward packer head'] = 0
+    mode_dictionary['Dean Edward packer split indicator'] = 0
+    mode_dictionary['Dean Edward packer split'] = 0
+    mode_dictionary['Heximal identifier percentage'] = 0
     return content, lexical_result, character_map, string_list, mode_dictionary, identifier_list, plus_equal_percentage, square_bracket_percentage
 
 def analyse_mode1(programme, mode_dictionary):
@@ -140,6 +144,10 @@ def analyse_mode1(programme, mode_dictionary):
                 break
             start += 1
             index += 1
+
+# def analyse_dean_edward_packer_head(programme, mode_dictionary):
+#     if (programme.find('function(p,a,c,k,e,r)' != -1):
+#         mode_dictionary['Dean Edward packer head'] += 1
 
 def human_readable_identifier_detection(identifier):
     '''
@@ -1088,6 +1096,7 @@ def mode_analysis(content_path, keyword_path):
     programme, lexical_result, character_map, string_list, mode_dictionary, identifier_list, plus_equal_percentage, square_bracket_percentage = initialise(content_path, keyword_path)
     identifier_set = set(identifier_list)
     analyse_mode1(programme, mode_dictionary)
+    analyse_dean_edward_packer_head(programme, mode_dictionary)
     analyse_string(string_list, mode_dictionary)
     analyse_lexical_modes(lexical_result, character_map, mode_dictionary, identifier_set)
     analyse_identifier(identifier_set, identifier_list, mode_dictionary)
@@ -1096,3 +1105,7 @@ def mode_analysis(content_path, keyword_path):
     if (load_and_predict(content_path, keyword_path, mode_dictionary['Abnormal function call'], plus_equal_percentage, square_bracket_percentage, string_list) == True) and (len(string_list) > 5):
         mode_dictionary['Keyword Concatenation'] += 1
     return mode_dictionary
+
+# New mode 1:function(p,a,c,k,e,d)
+# New mode 2:"||||" + split('|'）
+# New mode 3:drop "_", then all heximal
