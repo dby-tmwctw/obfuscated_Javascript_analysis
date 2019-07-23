@@ -52,9 +52,9 @@ def generate_classifier(raw_data):
     joblib.dump(classifier, 'concatenation_model.pkl')
     return classifier
 
-def load_and_predict(programme_path, keyword_path, abnormal_count, plus_equal_percentage, square_bracket_percentage, string_list):
+def load_and_predict(abnormal_count, plus_equal_percentage, square_bracket_percentage, string_list):
     classifier = joblib.load('concatenation_model.pkl')
-    vector = get_vector.get_vector(programme_path, keyword_path, abnormal_count, plus_equal_percentage, square_bracket_percentage, string_list)
+    vector = get_vector.get_vector(abnormal_count, plus_equal_percentage, square_bracket_percentage, string_list)
     vector_list = []
     vector_list.append(vector)
     prediction = classifier.predict(vector_list)

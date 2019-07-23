@@ -1102,7 +1102,7 @@ def mode_analysis(content_path, keyword_path):
     analyse_identifier(identifier_set, identifier_list, mode_dictionary)
     mode_dictionary.pop('XOR indicator')
     mode_dictionary.pop('Base 64 encoding indicator')
-    if (load_and_predict(content_path, keyword_path, mode_dictionary['Abnormal function call'], plus_equal_percentage, square_bracket_percentage, string_list) == True) and (len(string_list) > 5):
+    if (load_and_predict(mode_dictionary['Abnormal function call'], plus_equal_percentage, square_bracket_percentage, string_list) == True) and (len(string_list) > 5):
         mode_dictionary['Keyword Concatenation'] += 1
     return mode_dictionary
 

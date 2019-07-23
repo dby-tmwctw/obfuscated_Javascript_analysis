@@ -58,7 +58,7 @@ def count_hit(strings):
 #---------------------Main Function---------------------#
 #-------------------------主函数-------------------------#
 
-def get_vector(script_path, keyword_path, abnormal_count, plus_equal_percentage, square_bracket_percentage, string_list):
+def get_vector(abnormal_count, plus_equal_percentage, square_bracket_percentage, string_list):
     # 构建特征向量
     feature_vector = []
 
