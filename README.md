@@ -8,7 +8,7 @@
 
 ## 环境依赖
 
-Python 2
+Python 2  
 Jupyter
 
 ## 部署准备
